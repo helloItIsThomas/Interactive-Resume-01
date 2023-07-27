@@ -15,6 +15,7 @@ fun main() = application {
         hideWindowDecorations = true
         windowAlwaysOnTop = true
         position = IntVector2(1285,110)
+        windowTransparent = true
     }
     oliveProgram {
         val animation = Animation()
