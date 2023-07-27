@@ -21,7 +21,7 @@ fun main() = application {
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
         extend {
             drawer.clear(ColorRGBa.PINK)
-            animation(((frameCount * 0.01) ) % 2.0)
+            animation(((frameCount * 0.1) ) % 2.0)
             drawer.circle(100 + 200.0 * animation.pathSlider, 10.0, 20.0)
         }
     }
