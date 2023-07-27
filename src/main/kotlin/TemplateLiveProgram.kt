@@ -35,12 +35,6 @@ fun main() = application {
         val maruMini = loadFont(("data/fonts/maru-mini.otf"), width*0.033)
         val resumeImg = loadImage(File("data/images/resume.jpg"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
-        val colCount = 2
-        val rowCount = 2
-        val marginX = 40.0
-        val marginY = 100.0
-        val gutterX = 20.0
-        val gutterY = 0.0
 
         data class ParagraphStyle(
             val font: FontImageMap,
@@ -58,6 +52,18 @@ fun main() = application {
             val style: ParagraphStyle
         )
 
+        val headBlock = mutableListOf(
+            CustomText(
+                "\nhello,\nit's thomas",
+                h1
+            ),
+        )
+        val infoBlock = mutableListOf(
+            CustomText(
+                "thomas mcelmeel",
+                h3
+            ),
+        )
         val skillsBlock = mutableListOf(
             CustomText(
                 "\nskills",
@@ -231,7 +237,8 @@ fun main() = application {
         }
 
         val textCols = mutableListOf(
-            Rectangle(width * 0.12, height * 0.05, width * 0.79, height * 0.1),
+            Rectangle(width * 0.12, height * 0.05, width * 0.17, height * 0.1),
+            Rectangle(width * 0.32, height * 0.05, width * 0.59, height * 0.1),
             Rectangle(width * 0.12, height * 0.22, width * 0.35, height * 0.12),
             Rectangle(width * 0.12, height * 0.353, width * 0.35, height * 0.2),
             Rectangle(width * 0.12, height * 0.575, width * 0.35, height * 0.39),
@@ -252,19 +259,25 @@ fun main() = application {
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
 
-            // i need to make only one writerCall call.
-            // so therefore I need only two arguments:
-            //      ( textCol[1], txtList )
-            //      where txtList: list<CustomText>[2]
-            writerCall( textCols[1], skillsBlock)
-            writerCall( textCols[2], eduBlock)
-            writerCall( textCols[3], invBlock)
-            writerCall( textCols[4], expBlock)
-            writerCall( textCols[5], recBlock)
+            textCols.forEach{ e ->
+//                drawer.rectangle(e)
+            }
 
-//            textCols.forEach {
-//                writerCall( it, h1 )
-//            }
+            drawer.strokeWeight = 0.75
+            drawer.lineSegment(
+                width * 0.12,
+                height * 0.15,
+                (width*0.32) + (width * 0.563),
+                height * 0.15
+            )
+            writerCall( textCols[0], headBlock)
+            writerCall( textCols[1], infoBlock)
+            writerCall( textCols[2], skillsBlock)
+            writerCall( textCols[3], eduBlock)
+            writerCall( textCols[4], invBlock)
+            writerCall( textCols[5], expBlock)
+            writerCall( textCols[6], recBlock)
+
         }
     }
 }
