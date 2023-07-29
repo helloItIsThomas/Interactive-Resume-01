@@ -39,7 +39,7 @@ fun main() = application {
         data class ParagraphStyle(
             val font: FontImageMap,
             val textColor: ColorRGBa,
-            val leading: Double // Default line spacing
+            val leading: Double
         )
 
         val h3 = ParagraphStyle(monoReg, ColorRGBa.BLACK, 1.2)
@@ -321,11 +321,23 @@ fun main() = application {
             )
         )
 
-        fun writerCall(textCol: Rectangle, txtList: MutableList<CustomText>){
+        class Section( val id: Int, var _x: Double, var _y: Double, var _w: Double, var _h: Double, val txt: MutableList<CustomText> ) {
+            var thisRect = Rectangle(_x, _y, _w, _h)
+        }
+
+        val section0 = Section(0, width * 0.12, height * 0.05, width * 0.17, height * 0.1, headBlock)
+        val section1 = Section(1, width * 0.32, height * 0.05, width * 0.59, height * 0.1, infoBlock)
+        val section2 = Section(2, width * 0.12, height * 0.22, width * 0.35, height * 0.12, skillsBlock)
+        val section3 = Section(3, width * 0.12, height * 0.353, width * 0.35, height * 0.2, eduBlock)
+        val section4 = Section(4, width * 0.12, height * 0.575, width * 0.35, height * 0.39, invBlock)
+        val section5 = Section(5, width * 0.563, height * 0.22, width * 0.35, height * 0.46, expBlock)
+        val section6 = Section(6, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
+
+        fun writerCall(section: Section){
             writer {
-                this.box = textCol
+                this.box = section.thisRect
                 drawer.pushStyle()
-                txtList.forEachIndexed { ii, e->
+                section.txt.forEachIndexed { ii, e->
                     drawer.pushTransforms()
                     leading = e.style.leading
                     gaplessNewLine()
@@ -335,26 +347,13 @@ fun main() = application {
                     drawer.fill = e.style.textColor
                     drawer.fontMap = e.style.font
                     val thisCharArr = e.txt.toCharArray()
-//                    drawer.translate(
-//                        -width*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0),
-//                        -height*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0)
-//                    )
-//                    drawer.translate(sin((ii*2.0)+frameCount*0.05)*100.0, cos((ii*2)+frameCount*0.05)*100.0)
                     thisCharArr.forEachIndexed { i, c ->
-
-
                         drawer.pushTransforms()
                         var state2X =  vecList[((i+frameCount) % vecList.size)].x
                         var state2Y = vecList[((i+frameCount) % vecList.size)].y
                         var state1 = Vector2(0.0, 0.0)
                         var state2 = Vector2(state2X, state2Y)
-                        var moveVect = mix(state1, state2,
-//                        (frameCount*0.05) % 1.0
-                            sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0)
-//                            1.0
-                        )
-                        drawer.translate(moveVect)
-
+                        var moveVect = mix(state1, state2, 1.0)
                         text(thisCharArr[i].toString())
                         drawer.popTransforms()
                     }
@@ -363,16 +362,6 @@ fun main() = application {
                 drawer.popStyle()
             }
         }
-
-        val textCols = mutableListOf(
-            Rectangle(width * 0.12, height * 0.05, width * 0.17, height * 0.1),
-            Rectangle(width * 0.32, height * 0.05, width * 0.59, height * 0.1),
-            Rectangle(width * 0.12, height * 0.22, width * 0.35, height * 0.12),
-            Rectangle(width * 0.12, height * 0.353, width * 0.35, height * 0.2),
-            Rectangle(width * 0.12, height * 0.575, width * 0.35, height * 0.39),
-            Rectangle(width * 0.563, height * 0.22, width * 0.35, height * 0.46),
-            Rectangle(width * 0.563, height * 0.693, width * 0.35, height * 0.275)
-        )
 
 
         extend {
@@ -394,13 +383,13 @@ fun main() = application {
                 (width*0.32) + (width * 0.563),
                 height * 0.15
             )
-            writerCall( textCols[0], headBlock)
-            writerCall( textCols[1], infoBlock)
-            writerCall( textCols[2], skillsBlock)
-            writerCall( textCols[3], eduBlock)
-            writerCall( textCols[4], invBlock)
-            writerCall( textCols[5], expBlock)
-            writerCall( textCols[6], recBlock)
+            writerCall( section0 )
+            writerCall( section1 )
+            writerCall( section2 )
+            writerCall( section3 )
+            writerCall( section4 )
+            writerCall( section5 )
+            writerCall( section6 )
         }
     }
 }
