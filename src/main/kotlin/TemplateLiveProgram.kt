@@ -335,28 +335,17 @@ fun main() = application {
                     drawer.fill = e.style.textColor
                     drawer.fontMap = e.style.font
                     val thisCharArr = e.txt.toCharArray()
-                    drawer.translate(
-                        -width*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0),
-                        -height*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0)
-                    )
+//                    drawer.translate(
+//                        -width*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0),
+//                        -height*0.5 * sin(frameCount*0.05).map(-1.0, 1.0, 0.0, 1.0)
+//                    )
 //                    drawer.translate(sin((ii*2.0)+frameCount*0.05)*100.0, cos((ii*2)+frameCount*0.05)*100.0)
                     thisCharArr.forEachIndexed { i, c ->
 
-                        // I need an independent state2X and state2Y
-                        // for each character. So in here,
-                        // state2X = charsPos[i].x
-                        // state2Y = charsPos[i].y
-                        // Each character should have an independent mix level as well.
-                        // The mix level should be influenced by
-                        // the distance from the mouse to each character.
-                        // As the mouse gets closer to the character, its mix level goes towards state 1.
-                        // As the mouse moves away from the character, its mix level slowly goes towards state 2.
-                        // We do not need to keep track of each characters current position, just each pos in state 2.
-                        // We should however have a currentState2Pos, which rotates through each pos in state 2.
 
                         drawer.pushTransforms()
-                        var state2X =  vecList[((i+frameCount) % vecList.size).toInt()].x
-                        var state2Y = vecList[((i+frameCount) % vecList.size).toInt()].y
+                        var state2X =  vecList[((i+frameCount) % vecList.size)].x
+                        var state2Y = vecList[((i+frameCount) % vecList.size)].y
                         var state1 = Vector2(0.0, 0.0)
                         var state2 = Vector2(state2X, state2Y)
                         var moveVect = mix(state1, state2,
@@ -388,7 +377,7 @@ fun main() = application {
 
         extend {
             drawer.clear(ColorRGBa.TRANSPARENT)
-            drawer.imageFit(resumeImg, drawer.bounds)
+//            drawer.imageFit(resumeImg, drawer.bounds)
             var alphaColor = ColorRGBa.fromVector(Vector4(1.0,1.0, 1.0,
                 1.7)
             )
@@ -397,10 +386,6 @@ fun main() = application {
             animation(((frameCount * 0.01) ) % 2.0)
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
-
-            textCols.forEach{ e ->
-//                drawer.rectangle(e)
-            }
 
             drawer.strokeWeight = 0.75
             drawer.lineSegment(
