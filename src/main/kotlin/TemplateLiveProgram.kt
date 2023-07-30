@@ -1,15 +1,16 @@
 
 
 import demos.classes.Animation
+import kotlinx.coroutines.delay
+import org.openrndr.*
 import org.openrndr.animatable.Animatable
-import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.*
+import org.openrndr.draw.launch
 import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.math.*
 import org.openrndr.shape.Rectangle
-import org.openrndr.writer
 
 import java.io.File
 
@@ -22,12 +23,11 @@ fun main() = application {
         hideWindowDecorations = true
         windowAlwaysOnTop = true
         position = IntVector2(1380,110)
-        windowTransparent = true
+        windowTransparent = false
     }
+
     oliveProgram {
-        val textTarget = renderTarget(width, height){
-            colorBuffer()
-        }
+
         val animation = Animation()
         val monoReg = loadFont(("data/fonts/mono-reg.otf"), width*0.013)
         val monoBold2 = loadFont(("data/fonts/mono-bold.otf"), width*0.013)
@@ -337,7 +337,7 @@ fun main() = application {
             }
             fun render(drawer: Drawer){
                 drawer.fill = ColorRGBa.FOREST_GREEN
-                if(isSelected) drawer.rectangle(thisRect)
+//                if(isSelected) drawer.rectangle(thisRect)
             }
         }
 
@@ -380,6 +380,8 @@ fun main() = application {
         )
 
         fun writerCall(section: Section) {
+            drawer.pushTransforms()
+//            drawer.translate(-width*0.5, -height*0.5)
             writer {
                 this.box = section.thisRect
                 section.txt.forEach{ e ->
@@ -391,13 +393,17 @@ fun main() = application {
                     drawer.pushTransforms()
                     var state1 = Vector2(0.0, 0.0)
                     e.txt.forEachIndexed { i, c ->
+                        drawer.pushTransforms()
                         val index = (i + frameCount) % vecList.size
                         var state2X = vecList[index].x
                         var state2Y = vecList[index].y
                         var state2 = Vector2(state2X, state2Y)
                         var moveVect = mix(state1, state2, 1.0)
-//                        drawer.translate(moveVect)
+                        drawer.translate(-width*0.5, -height*0.5)
+                        drawer.translate(moveVect)
+                        drawer.translate(i*0.0025, i*0.0025)
                         text(c.toString())
+                        drawer.popTransforms()
                     }
                     drawer.popTransforms()
                     drawer.popStyle()
@@ -405,19 +411,20 @@ fun main() = application {
                     gaplessNewLine()
                 }
             }
+            drawer.popTransforms()
         }
 
         extend {
-            drawer.clear(ColorRGBa.TRANSPARENT)
-            var alphaColor = ColorRGBa.fromVector(Vector4(1.0,1.0, 1.0,
-                1.7)
-            )
-            drawer.fill = alphaColor
-            drawer.rectangle(drawer.bounds)
+            drawer.clear(ColorRGBa.WHITE)
+//            drawer.fill = alphaColor
+//            drawer.rectangle(drawer.bounds)
             animation(((frameCount * 0.01) ) % 2.0)
 
+
+//            writerCall(sections[2])
+//            writerCall(sections[5])
             sections.forEach { e ->
-                writerCall(e)
+//                writerCall(e)
                 e.check()
                 e.render(drawer)
                 MrLine.check(e)
@@ -426,6 +433,7 @@ fun main() = application {
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
             drawer.strokeWeight = 0.75
+
             drawer.lineSegment(
                 MrLine.drawPos,
                 MrLine.endPos
