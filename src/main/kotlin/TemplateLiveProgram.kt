@@ -4,10 +4,7 @@ import demos.classes.Animation
 import org.openrndr.animatable.Animatable
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.Drawer
-import org.openrndr.draw.FontImageMap
-import org.openrndr.draw.loadFont
-import org.openrndr.draw.loadImage
+import org.openrndr.draw.*
 import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.math.*
@@ -24,10 +21,13 @@ fun main() = application {
         height = (width * aspectRatio).toInt()
         hideWindowDecorations = true
         windowAlwaysOnTop = true
-        position = IntVector2(1500,110)
+        position = IntVector2(1380,110)
         windowTransparent = true
     }
     oliveProgram {
+        val textTarget = renderTarget(width, height){
+            colorBuffer()
+        }
         val animation = Animation()
         val monoReg = loadFont(("data/fonts/mono-reg.otf"), width*0.013)
         val monoBold2 = loadFont(("data/fonts/mono-bold.otf"), width*0.013)
@@ -379,38 +379,33 @@ fun main() = application {
             Section(6, 0.0, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
         )
 
-        fun writerCall(section: Section){
+        fun writerCall(section: Section) {
             writer {
                 this.box = section.thisRect
-                drawer.pushStyle()
-                section.txt.forEachIndexed { ii, e->
-                    drawer.pushTransforms()
+                section.txt.forEach{ e ->
                     drawer.fontMap = e.style.font
                     leading = e.style.leading
-                    gaplessNewLine()
-                    gaplessNewLine()
-                    drawer.stroke = null
-                    drawer.fill = null
+                    drawer.pushStyle()
                     drawer.fill = e.style.textColor
-//                    text(e.txt)
-                    val thisCharArr = e.txt.toCharArray()
-
-                    thisCharArr.forEachIndexed { i, c ->
-                        drawer.pushTransforms()
-                        var state2X =  vecList[((i+frameCount) % vecList.size)].x
-                        var state2Y = vecList[((i+frameCount) % vecList.size)].y
-                        var state1 = Vector2(0.0, 0.0)
+                    drawer.stroke = null
+                    drawer.pushTransforms()
+                    var state1 = Vector2(0.0, 0.0)
+                    e.txt.forEachIndexed { i, c ->
+                        val index = (i + frameCount) % vecList.size
+                        var state2X = vecList[index].x
+                        var state2Y = vecList[index].y
                         var state2 = Vector2(state2X, state2Y)
                         var moveVect = mix(state1, state2, 1.0)
-                        text(thisCharArr[i].toString())
-                        drawer.popTransforms()
+//                        drawer.translate(moveVect)
+                        text(c.toString())
                     }
                     drawer.popTransforms()
+                    drawer.popStyle()
+                    gaplessNewLine()
+                    gaplessNewLine()
                 }
-                drawer.popStyle()
             }
         }
-
 
         extend {
             drawer.clear(ColorRGBa.TRANSPARENT)
@@ -427,6 +422,7 @@ fun main() = application {
                 e.render(drawer)
                 MrLine.check(e)
             }
+
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
             drawer.strokeWeight = 0.75
