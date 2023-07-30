@@ -2,12 +2,12 @@
 [
   {
     "time": 0.0,
-    "easing": "expo-out",
+    "easing": "expo-in",
     "pathSlider": 0.0
   },
   {
     "time": 1.0,
-    "easing": "expo-in",
+    "easing": "expo-in-out",
     "pathSlider": 1.0
   }
 ]

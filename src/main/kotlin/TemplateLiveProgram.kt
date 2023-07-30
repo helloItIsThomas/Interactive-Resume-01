@@ -1,20 +1,20 @@
 
 
 import demos.classes.Animation
+import org.openrndr.animatable.Animatable
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
+import org.openrndr.draw.Drawer
 import org.openrndr.draw.FontImageMap
 import org.openrndr.draw.loadFont
 import org.openrndr.draw.loadImage
-import org.openrndr.extra.imageFit.imageFit
+import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.olive.oliveProgram
 import org.openrndr.math.*
 import org.openrndr.shape.Rectangle
 import org.openrndr.writer
 
 import java.io.File
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 fun main() = application {
@@ -35,6 +35,8 @@ fun main() = application {
         val maruMini = loadFont(("data/fonts/maru-mini.otf"), width*0.033)
         val resumeImg = loadImage(File("data/images/resume.jpg"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
+        val hypeLowThresh = 0.25
+        val hypeHighThresh = 0.75
 
         data class ParagraphStyle(
             val font: FontImageMap,
@@ -321,17 +323,61 @@ fun main() = application {
             )
         )
 
-        class Section( val id: Int, var _x: Double, var _y: Double, var _w: Double, var _h: Double, val txt: MutableList<CustomText> ) {
-            var thisRect = Rectangle(_x, _y, _w, _h)
+        val Selector = object {
+            var currentSection = 100
         }
 
-        val section0 = Section(0, width * 0.12, height * 0.05, width * 0.17, height * 0.1, headBlock)
-        val section1 = Section(1, width * 0.32, height * 0.05, width * 0.59, height * 0.1, infoBlock)
-        val section2 = Section(2, width * 0.12, height * 0.22, width * 0.35, height * 0.12, skillsBlock)
-        val section3 = Section(3, width * 0.12, height * 0.353, width * 0.35, height * 0.2, eduBlock)
-        val section4 = Section(4, width * 0.12, height * 0.575, width * 0.35, height * 0.39, invBlock)
-        val section5 = Section(5, width * 0.563, height * 0.22, width * 0.35, height * 0.46, expBlock)
-        val section6 = Section(6, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
+        class Section( val id: Int, var hype: Double, _x: Double, _y: Double, _w: Double, _h: Double, val txt: MutableList<CustomText> ) {
+            var thisRect = Rectangle(_x, _y, _w, _h)
+            var isSelected = false
+            fun check(){
+                if(Selector.currentSection == id){
+                    isSelected = true
+                }
+            }
+            fun render(drawer: Drawer){
+                drawer.fill = ColorRGBa.FOREST_GREEN
+                if(isSelected) drawer.rectangle(thisRect)
+            }
+        }
+
+
+        val MrLine = object {
+            var startPos = Vector2(width * 0.12, height * 0.15)
+            var drawPos = startPos
+            var endPos = Vector2((width*0.32) + (width * 0.563), height * 0.15)
+
+            fun seek(section: Section) {
+                // so I want to move towards the section.
+                // but not all at once.
+                // so I get the direction I need to go,
+                // normalize it,
+                // then multiply it by the magnitude I want to go.
+                val direction = section.thisRect.corner - startPos
+                val normDir = direction.normalized
+            }
+
+            fun superSeek(section: Section) {}
+
+            fun check(section: Section){
+                if(section.hype > hypeLowThresh && section.hype < hypeHighThresh){
+                    Selector.currentSection = section.id
+                    this.seek(section)
+                } else if(section.hype > hypeHighThresh){
+                    this.superSeek(section)
+                }
+            }
+        }
+
+        val sections = mutableListOf(
+            Section(0, 0.0, width * 0.12, height * 0.05, width * 0.17, height * 0.1, headBlock),
+            Section(1, 0.0, width * 0.32, height * 0.05, width * 0.59, height * 0.1, infoBlock),
+            Section(2, 0.0, width * 0.12, height * 0.22, width * 0.35, height * 0.12, skillsBlock),
+            Section(3, 0.0, width * 0.12, height * 0.353, width * 0.35, height * 0.2, eduBlock),
+            Section(4, 0.5, width * 0.12, height * 0.575, width * 0.35, height * 0.39, invBlock),
+            Section(5, 0.0, width * 0.563, height * 0.22, width * 0.35, height * 0.46, expBlock),
+            Section(6, 0.0, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
+        )
 
         fun writerCall(section: Section){
             writer {
@@ -339,14 +385,16 @@ fun main() = application {
                 drawer.pushStyle()
                 section.txt.forEachIndexed { ii, e->
                     drawer.pushTransforms()
+                    drawer.fontMap = e.style.font
                     leading = e.style.leading
                     gaplessNewLine()
                     gaplessNewLine()
-                    drawer.stroke = ColorRGBa.BLACK
+                    drawer.stroke = null
                     drawer.fill = null
                     drawer.fill = e.style.textColor
-                    drawer.fontMap = e.style.font
+//                    text(e.txt)
                     val thisCharArr = e.txt.toCharArray()
+
                     thisCharArr.forEachIndexed { i, c ->
                         drawer.pushTransforms()
                         var state2X =  vecList[((i+frameCount) % vecList.size)].x
@@ -366,30 +414,28 @@ fun main() = application {
 
         extend {
             drawer.clear(ColorRGBa.TRANSPARENT)
-//            drawer.imageFit(resumeImg, drawer.bounds)
             var alphaColor = ColorRGBa.fromVector(Vector4(1.0,1.0, 1.0,
                 1.7)
             )
             drawer.fill = alphaColor
             drawer.rectangle(drawer.bounds)
             animation(((frameCount * 0.01) ) % 2.0)
+
+            sections.forEach { e ->
+                writerCall(e)
+                e.check()
+                e.render(drawer)
+                MrLine.check(e)
+            }
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
-
             drawer.strokeWeight = 0.75
             drawer.lineSegment(
-                width * 0.12,
-                height * 0.15,
-                (width*0.32) + (width * 0.563),
-                height * 0.15
+                MrLine.drawPos,
+                MrLine.endPos
             )
-            writerCall( section0 )
-            writerCall( section1 )
-            writerCall( section2 )
-            writerCall( section3 )
-            writerCall( section4 )
-            writerCall( section5 )
-            writerCall( section6 )
+
+            MrLine.drawPos = mix(MrLine.startPos, sections[4].thisRect.corner, animation.pathSlider)
         }
     }
 }
