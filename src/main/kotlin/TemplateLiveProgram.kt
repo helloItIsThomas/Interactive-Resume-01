@@ -1,12 +1,14 @@
 
 
 import demos.classes.Animation
-import org.openrndr.animatable.Animatable
+import org.openrndr.KEY_SPACEBAR
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.*
-import org.openrndr.extra.color.presets.FOREST_GREEN
+import org.openrndr.extra.keyframer.Keyframer
+import org.openrndr.extra.noise.random
 import org.openrndr.extra.olive.oliveProgram
+import org.openrndr.extra.shapes.RoundedRectangle
 import org.openrndr.math.*
 import org.openrndr.shape.Rectangle
 import org.openrndr.writer
@@ -21,13 +23,14 @@ fun main() = application {
         height = (width * aspectRatio).toInt()
         hideWindowDecorations = true
         windowAlwaysOnTop = true
-        position = IntVector2(1380,110)
+//        position = IntVector2(1380,110)
+        position = IntVector2(1520,110)
         windowTransparent = true
     }
+
+
     oliveProgram {
-        val textTarget = renderTarget(width, height){
-            colorBuffer()
-        }
+
         val animation = Animation()
         val monoReg = loadFont(("data/fonts/mono-reg.otf"), width*0.013)
         val monoBold2 = loadFont(("data/fonts/mono-bold.otf"), width*0.013)
@@ -212,7 +215,7 @@ fun main() = application {
                 h3
             ),
         )
-        val invBlock = mutableListOf(
+        val invBlock0 = mutableListOf(
             CustomText(
                 "\ninvolvement",
                 h1
@@ -228,7 +231,10 @@ fun main() = application {
             CustomText(
                 "\nVice-President and Co-Creator of CCS’s Creative Coding Community",
                 h31
-            ),
+            )
+        )
+
+        val invBlock1 = mutableListOf(
             CustomText(
                 "\nDetroit Historical Society\n" +
                         "Sponsored Studio",
@@ -250,7 +256,8 @@ fun main() = application {
                 h3
             ),
         )
-        val expBlock = mutableListOf(
+
+        val expBlock0 = mutableListOf(
             CustomText(
                 "\nexperience",
                 h1
@@ -271,7 +278,10 @@ fun main() = application {
                         "driven Oracle system for the Highlight\n" +
                         "Delft 2023 Festival.",
                 h3
-            ),
+            )
+        )
+
+        val expBlock1 = mutableListOf(
             CustomText(
                 "\n2x4",
                 h32
@@ -324,7 +334,22 @@ fun main() = application {
         )
 
         val Selector = object {
-            var currentSection = 100
+            var currentSection = 0
+
+            fun check(_randomNum: Double) {
+                if(_randomNum.toInt() != currentSection){
+                    println("State Changed")
+                    currentSection = _randomNum.toInt()
+                }
+            }
+        }
+
+        var randomNumber = 0.0
+        keyboard.keyDown.listen {
+            if (it.key == KEY_SPACEBAR) {
+                randomNumber = random(0.0, 5.0)
+                Selector.check(randomNumber)
+            }
         }
 
         class Section( val id: Int, var hype: Double, _x: Double, _y: Double, _w: Double, _h: Double, val txt: MutableList<CustomText> ) {
@@ -336,50 +361,73 @@ fun main() = application {
                 }
             }
             fun render(drawer: Drawer){
-                drawer.fill = ColorRGBa.FOREST_GREEN
-                if(isSelected) drawer.rectangle(thisRect)
+//                drawer.fill = ColorRGBa.FOREST_GREEN
+//                if(isSelected) drawer.rectangle(thisRect)
             }
         }
 
+        val LinePath = object {
+            val margin = 10.0
+            var outline: RoundedRectangle = RoundedRectangle(margin, margin, width - (margin*2.0), height - (margin*2.0), 10.0)
+        }
 
-        val MrLine = object {
+
+        class MrLine : Keyframer() {
+            var core = 0.0
+            val clockDiv = 0.01
+            var decTime = 0.0
+            var intTime = 0
+            var fracTime = 0.0
+
+            val lineSlider0 by DoubleChannel("pathSlider")
             var startPos = Vector2(width * 0.12, height * 0.15)
-            var drawPos = startPos
             var endPos = Vector2((width*0.32) + (width * 0.563), height * 0.15)
+            var drawPos = startPos
+
+            val stops = mutableListOf(
+                0.85,
+                0.277,
+                0.342,
+                0.8,
+                0.83,
+                0.8478,
+                0.87
+            )
+            var currentPos = 0.0
+            var newPos = 0.0
+
+            fun update(){
+                core *= clockDiv
+                decTime = core
+                intTime = core.toInt()
+                fracTime = core % 1.0
+            }
 
             fun seek(section: Section) {
-                // so I want to move towards the section.
-                // but not all at once.
-                // so I get the direction I need to go,
-                // normalize it,
-                // then multiply it by the magnitude I want to go.
-                val direction = section.thisRect.corner - startPos
-                val normDir = direction.normalized
+                newPos = mix(currentPos, stops[Selector.currentSection], lineSlider0)
             }
-
-            fun superSeek(section: Section) {}
 
             fun check(section: Section){
-                if(section.hype > hypeLowThresh && section.hype < hypeHighThresh){
-                    Selector.currentSection = section.id
                     this.seek(section)
-                } else if(section.hype > hypeHighThresh){
-                    this.superSeek(section)
-                }
             }
         }
+
+        val MrLine0 = MrLine()
+        MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
 
         val sections = mutableListOf(
             Section(0, 0.0, width * 0.12, height * 0.05, width * 0.17, height * 0.1, headBlock),
             Section(1, 0.0, width * 0.32, height * 0.05, width * 0.59, height * 0.1, infoBlock),
             Section(2, 0.0, width * 0.12, height * 0.22, width * 0.35, height * 0.12, skillsBlock),
             Section(3, 0.0, width * 0.12, height * 0.353, width * 0.35, height * 0.2, eduBlock),
-            Section(4, 0.5, width * 0.12, height * 0.575, width * 0.35, height * 0.39, invBlock),
-            Section(5, 0.0, width * 0.563, height * 0.22, width * 0.35, height * 0.46, expBlock),
-            Section(6, 0.0, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
+            Section(4, 0.5, width * 0.12, height * 0.575, width * 0.35, height * 0.39, invBlock0),
+            Section(5, 0.5, width * 0.12, height * 0.725, width * 0.35, height * 0.39, invBlock1),
+            Section(6, 0.0, width * 0.563, height * 0.22, width * 0.35, height * 0.46, expBlock0),
+            Section(7, 0.0, width * 0.563, height * 0.38, width * 0.35, height * 0.46, expBlock1),
+            Section(8, 0.0, width * 0.563, height * 0.693, width * 0.35, height * 0.275, recBlock)
         )
 
-        fun writerCall(section: Section) {
+        fun writerCallSentence(section: Section){
             writer {
                 this.box = section.thisRect
                 section.txt.forEach{ e ->
@@ -388,17 +436,42 @@ fun main() = application {
                     drawer.pushStyle()
                     drawer.fill = e.style.textColor
                     drawer.stroke = null
+                    text(e.txt)
+                    drawer.popStyle()
+                    gaplessNewLine()
+                    gaplessNewLine()
+                }
+            }
+        }
+
+        fun writerCall(section: Section) {
+            writer {
+                this.box = section.thisRect
+                section.txt.forEachIndexed { i, e ->
+                    drawer.fontMap = e.style.font
+                    leading = e.style.leading
+                    drawer.pushStyle()
+                    drawer.fill = e.style.textColor
+                    drawer.stroke = null
                     drawer.pushTransforms()
-                    var state1 = Vector2(0.0, 0.0)
-                    e.txt.forEachIndexed { i, c ->
-                        val index = (i + frameCount) % vecList.size
-                        var state2X = vecList[index].x
-                        var state2Y = vecList[index].y
-                        var state2 = Vector2(state2X, state2Y)
-                        var moveVect = mix(state1, state2, 1.0)
+
+                    val state1 = Vector2(0.0, 0.0)
+                    val words = e.txt.split("\\s+".toRegex())
+//                    text(words[(frameCount*0.05).toInt() % words.size])
+                    words.forEachIndexed { ii, word ->
+                        val index = (ii + frameCount*0.1) % vecList.size
+                        val state2 = Vector2(
+                            vecList[index.toInt()].x,
+                            vecList[index.toInt()].y
+                        )
+                        val moveVect = mix(state1, state2, 1.0)
+                        drawer.translate(width*-0.5, height*-0.5)
 //                        drawer.translate(moveVect)
-                        text(c.toString())
+                        drawer.text(words[(frameCount*0.05).toInt() % words.size])
+//                        drawer.text(word + " ")
+//                        text(word + " ")
                     }
+//                    text(e.txt)
                     drawer.popTransforms()
                     drawer.popStyle()
                     gaplessNewLine()
@@ -408,30 +481,38 @@ fun main() = application {
         }
 
         extend {
-            drawer.clear(ColorRGBa.TRANSPARENT)
-            var alphaColor = ColorRGBa.fromVector(Vector4(1.0,1.0, 1.0,
-                1.7)
-            )
-            drawer.fill = alphaColor
-            drawer.rectangle(drawer.bounds)
-            animation(((frameCount * 0.01) ) % 2.0)
+//            println((frameCount*0.01).toInt().toDouble() % 5.0)
+            MrLine0.core = frameCount.toDouble()
+            MrLine0.update()
+            drawer.clear(ColorRGBa.WHITE)
+            animation(((frameCount * 0.007) ) % 2.0)
+            MrLine0(((frameCount * 0.007) ) % 2.0)
 
+            writerCall(sections[5])
             sections.forEach { e ->
-                writerCall(e)
+//                writerCall(e)
+                if(e.id != 5){
+                    writerCallSentence(e)
+                }
                 e.check()
                 e.render(drawer)
-                MrLine.check(e)
+                MrLine0.check(e)
             }
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
             drawer.strokeWeight = 0.75
             drawer.lineSegment(
-                MrLine.drawPos,
-                MrLine.endPos
+                MrLine0.drawPos,
+                MrLine0.endPos
             )
 
-            MrLine.drawPos = mix(MrLine.startPos, sections[4].thisRect.corner, animation.pathSlider)
+            drawer.fill = null
+            drawer.stroke = ColorRGBa.BLACK
+            val myC = LinePath.outline.contour
+            drawer.fill = ColorRGBa.BLACK
+            drawer.stroke = null
+            drawer.circle(myC.position(MrLine0.newPos), 5.0)
         }
     }
 }

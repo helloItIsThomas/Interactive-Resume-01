@@ -2,12 +2,22 @@
 [
   {
     "time": 0.0,
-    "easing": "expo-in",
+    "easing": "quad-in-out",
     "pathSlider": 0.0
   },
   {
+    "time": 0.0,
+    "easing": "quad-out",
+    "slider2": 0.0
+  },
+  {
     "time": 1.0,
-    "easing": "expo-in-out",
+    "easing": "quad-in-out",
     "pathSlider": 1.0
+  },
+  {
+    "time": 1.0,
+    "easing": "quad-in",
+    "slider2": 1.0
   }
 ]

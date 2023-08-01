@@ -5,6 +5,7 @@ import org.openrndr.extra.keyframer.Keyframer
 // define keyframes channels
 class Animation : Keyframer() {
     val pathSlider by DoubleChannel("pathSlider")
+    val slider2 by DoubleChannel("pathSlider")
     val circleSlider by DoubleChannel("circleSlider")
     val circleSliderOut by DoubleChannel("circleSliderOut")
     val circleSliderOut1 by DoubleChannel("circleSliderOut1")
