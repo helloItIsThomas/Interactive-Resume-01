@@ -38,14 +38,12 @@ fun writerCallWords(section: Section, localDraw: Drawer){
 
 
             words.forEachIndexed { i, word ->
-                if(section.id == 4){
-                    println(section.phaseAmt)
-//                    println(section.phaseAmt)
+                if(section.id == 4) {
                     localDraw.pushTransforms()
                     localDraw.translate(mix(section.origin, VecList.vecList[0] * 0.5, section.phaseAmt))
                     text(word)
                     localDraw.popTransforms()
-                }else text(word)
+                } else text(word)
             }
 
             localDraw.popStyle()
