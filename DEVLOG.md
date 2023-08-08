@@ -1,4 +1,4 @@
 
 # Dev Log
 
-### added "proof of concept" translate system, which implements the mix function.
+### implemented phase amount in Section.kt incorrectly, needs to be fixed
