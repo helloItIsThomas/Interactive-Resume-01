@@ -56,7 +56,7 @@ fun main() = application {
 
             val elapsedTime = measureTimeMillis {
                 sections.forEach { e ->
-//                    writerCallSections(e, drawer)
+                    writerCallSections(e, drawer)
 //                    writerCallWords(e, drawer)
 //                    writerCallChars(e, drawer)
                     e.check()
