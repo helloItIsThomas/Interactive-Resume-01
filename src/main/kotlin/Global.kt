@@ -8,17 +8,21 @@ import org.openrndr.draw.Drawer
 import org.openrndr.draw.FontImageMap
 import org.openrndr.draw.loadFont
 import org.openrndr.draw.loadImage
+import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.extra.shapes.RoundedRectangle
 import org.openrndr.math.Vector2
 import java.io.File
 import kotlin.properties.Delegates
 
 object Global {
+    lateinit var tracker: ADSRTracker
     lateinit var drawer: Drawer
     var width by Delegates.notNull<Int>()
     var height by Delegates.notNull<Int>()
     var frameCount by Delegates.notNull<Int>()
     var clock by Delegates.notNull<Double>()
+    var sustainTime by Delegates.notNull<Int>()
+    var peakAttackLv by Delegates.notNull<Double>()
 
     lateinit var monoReg: FontImageMap
     lateinit var monoBold2: FontImageMap

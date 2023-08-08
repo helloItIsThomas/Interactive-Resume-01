@@ -55,7 +55,7 @@ class Section(
     }
 
     fun move(result: Double) {
-        println(Global.clock * result)
+//        println(Global.clock * result)
         this.phaseAmt = (Global.clock * (result)).map(
             0.0,
             10.0,

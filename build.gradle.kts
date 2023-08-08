@@ -13,6 +13,7 @@ val orxFeatures = setOf<String>(
 //  "orx-boofcv",
     "orx-camera",
 //  "orx-chataigne",
+    "orx-envelopes",
     "orx-color",
     "orx-compositor",
 //  "orx-compute-graph",

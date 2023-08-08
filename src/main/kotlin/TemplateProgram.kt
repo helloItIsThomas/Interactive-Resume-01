@@ -1,16 +1,18 @@
 
 
+import Global.tracker
 import classes.MrLine
 import classes.ParagraphStyle
 import demos.classes.Animation
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.loadFont
+import org.openrndr.extra.envelopes.ADSR
+import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.IntVector2
 import org.openrndr.math.Vector2
 import java.io.File
 import kotlin.system.measureTimeMillis
-
 
 fun main() = application {
     configure {
@@ -43,6 +45,14 @@ fun main() = application {
         val MrLine0 = MrLine()
         MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
+
+        tracker = ADSRTracker(this)
+        tracker.attack = 0.1
+        Global.peakAttackLv = 50.0
+        tracker.decay = 0.05
+        Global.sustainTime = 5000
+        tracker.sustain = 0.9
+        tracker.release = 0.1
 
         extend {
             Global.frameCount = frameCount
@@ -84,7 +94,12 @@ fun main() = application {
             val myC = LinePath.outline.contour
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
-            drawer.circle(myC.position(MrLine0.newPos), 5.0)
+            drawer.circle(myC.position(MrLine0.newPos), tracker.value() * Global.peakAttackLv)
+            drawer.circle(
+                200.0,
+                200.0,
+                tracker.value() * Global.peakAttackLv
+            )
         }
     }
 }

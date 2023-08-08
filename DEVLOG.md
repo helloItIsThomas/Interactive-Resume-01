@@ -1,4 +1,4 @@
 
 # Dev Log
 
-### implemented phase amount in Section.kt incorrectly, needs to be fixed
+### implemented adsr tracker in a way that is probably good enough
