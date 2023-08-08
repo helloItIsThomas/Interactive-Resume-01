@@ -1,14 +1,15 @@
 
 
 import classes.MrLine
+import classes.ParagraphStyle
 import demos.classes.Animation
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.*
-import org.openrndr.math.*
-import org.openrndr.shape.IntRectangle
-import org.openrndr.shape.Rectangle
+import org.openrndr.draw.loadFont
+import org.openrndr.math.IntVector2
+import org.openrndr.math.Vector2
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 
 fun main() = application {
@@ -22,16 +23,23 @@ fun main() = application {
         windowTransparent = true
     }
 
-
     program {
         setupKeyboardListeners()
         Global.drawer = drawer
         Global.width = width
         Global.height = height
         Global.frameCount = frameCount
+        Global.monoReg = loadFont(("data/fonts/mono-reg.otf"), width*0.013)
+        Global.monoBold2 = loadFont(("data/fonts/mono-bold.otf"), width*0.013)
+        Global.monoBold = loadFont(("data/fonts/mono-bold.otf"), width*0.0193)
+        Global.maruMini = loadFont(("data/fonts/maru-mini.otf"), width*0.033)
+        Global.vecList = listOf(Vector2(306.888437030501, 200.0))
+        Global.h3 = ParagraphStyle(Global.monoReg, ColorRGBa.BLACK, 1.2)
+        Global.h32 = ParagraphStyle(Global.monoBold, ColorRGBa.BLACK, 1.2)
+        Global.h31 = ParagraphStyle(Global.monoBold2, ColorRGBa.BLACK, 1.2)
+        Global.h1 = ParagraphStyle(Global.maruMini, ColorRGBa.BLACK, 0.1)
+
         val animation = Animation()
-        val myFontSize = 100.0
-        val myFontMap = loadFont("data/fonts/default.otf", myFontSize)
         val MrLine0 = MrLine()
         MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
@@ -44,16 +52,20 @@ fun main() = application {
             animation(((frameCount * 0.007) ) % 2.0)
             MrLine0(((frameCount * 0.007) ) % 2.0)
 
-            writerCall(sections[5])
-            sections.forEach { e ->
-                writerCall(e)
-                if(e.id != 5){
-                    writerCallSentence(e)
+            drawer.fill = ColorRGBa.BLACK
+
+            val elapsedTime = measureTimeMillis {
+                sections.forEach { e ->
+//                    writerCallSections(e, drawer)
+//                    writerCallWords(e, drawer)
+//                    writerCallChars(e, drawer)
+                    e.check()
+                    e.render(drawer)
+                    MrLine0.check(e)
                 }
-                e.check()
-                e.render(drawer)
-                MrLine0.check(e)
             }
+
+            println(elapsedTime)
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
@@ -69,7 +81,6 @@ fun main() = application {
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
             drawer.circle(myC.position(MrLine0.newPos), 5.0)
-
         }
     }
 }
