@@ -46,26 +46,31 @@ fun main() = application {
 
         extend {
             Global.frameCount = frameCount
+            Global.clock = (Global.frameCount*0.05)
             MrLine0.core = frameCount.toDouble()
             MrLine0.update()
             drawer.clear(ColorRGBa.WHITE)
             animation(((frameCount * 0.007) ) % 2.0)
             MrLine0(((frameCount * 0.007) ) % 2.0)
+            Mouse.pos = mouse.position
+            drawer.circle(Mouse.pos, Mouse.rad)
 
             drawer.fill = ColorRGBa.BLACK
 
             val elapsedTime = measureTimeMillis {
                 sections.forEach { e ->
-                    writerCallSections(e, drawer)
-//                    writerCallWords(e, drawer)
+                    e.move()
+                    e.getDist(Mouse)
+//                    writerCallSections(e, drawer)
+                    writerCallWords(e, drawer)
 //                    writerCallChars(e, drawer)
                     e.check()
                     e.render(drawer)
-                    MrLine0.check(e)
+                    MrLine0.check()
                 }
             }
 
-            println(elapsedTime)
+//            println(elapsedTime)
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK

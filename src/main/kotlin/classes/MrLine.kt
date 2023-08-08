@@ -37,11 +37,11 @@ class MrLine : Keyframer() {
         fracTime = core % 1.0
     }
 
-    fun seek(section: Section) {
+    fun seek() {
         newPos = mix(currentPos, stops[Selector.currentSection], lineSlider0)
     }
 
-    fun check(section: Section){
-        this.seek(section)
+    fun check() {
+        this.seek()
     }
 }

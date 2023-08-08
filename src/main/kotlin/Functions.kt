@@ -7,6 +7,7 @@ import org.openrndr.draw.writer
 import org.openrndr.math.Vector2
 import org.openrndr.math.mix
 import org.openrndr.writer
+import kotlin.time.times
 
 
 fun writerCallSections(section: Section, localDraw: Drawer){
@@ -34,9 +35,19 @@ fun writerCallWords(section: Section, localDraw: Drawer){
             localDraw.fill = e.style.textColor
             localDraw.stroke = null
             val words = e.txt.split("\\s+".toRegex())
-            words.forEach { word ->
-                text(word)
+
+
+            words.forEachIndexed { i, word ->
+                if(section.id == 4){
+                    println(section.phaseAmt)
+//                    println(section.phaseAmt)
+                    localDraw.pushTransforms()
+                    localDraw.translate(mix(section.origin, VecList.vecList[0] * 0.5, section.phaseAmt))
+                    text(word)
+                    localDraw.popTransforms()
+                }else text(word)
             }
+
             localDraw.popStyle()
             gaplessNewLine()
             gaplessNewLine()
