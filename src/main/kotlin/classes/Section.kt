@@ -1,11 +1,15 @@
 package classes
 
+import Global.globalThis
 import Mouse
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.color.presets.FOREST_GREEN
+import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
-import org.openrndr.math.map
 import org.openrndr.shape.Rectangle
 
 class Section(
@@ -18,9 +22,13 @@ class Section(
     val txt: MutableList<CustomText>
 ) {
     var thisRect = Rectangle(_x, _y, _w, _h)
-    val outer = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
+//    val outer = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
+    var isWithin = false
+    var isWithinPrev = false
     var origin = Vector2(0.0, 0.0)
+    var sectionTracker = ADSRTracker(globalThis)
+    var isTriggerActive = false
     fun check() {
 //        if(Selector.currentSection == id){
 //            isSelected = true
@@ -28,41 +36,29 @@ class Section(
     }
 
     fun getDist(Mouse: Mouse) {
-        val isWithin = thisRect.contains(Mouse.pos)
-        val isClose = outer.contains(Mouse.pos)
 
-        val i = thisRect
-        val p = Mouse.pos
-        val result = if (outer.contains(p)) minOf(
-            1.0,
-            maxOf(
-                0.0,
-                minOf(
-                    (p.x - outer.x) / (i.x - outer.x),
-                    (outer.x + outer.width - p.x) / (outer.x + outer.width - i.x - i.width),
-                    (p.y - outer.y) / (i.y - outer.y),
-                    (outer.y + outer.height - p.y) / (outer.y + outer.height - i.y - i.height)
-                )
-            )
-        ) else 0.0
+        isWithin = thisRect.contains(Mouse.pos)
+        if (isWithinPrev != isWithin){
+            println(isWithin)
+            isWithinPrev = isWithin
+            if(isWithin && !isTriggerActive){
+                sectionTracker.triggerOn()
+                isTriggerActive = true
 
-        // at the moment we are doing something wrong
-        // because we don't know exactly what we are trying to achieve.
-        // take a break and then look at this phase handling  with fresh eyes.
-
+                GlobalScope.launch {
+                    delay(1000)
+                    sectionTracker.triggerOff()
+                    isTriggerActive = false
+                }
+            }
+        }
+        // just to clarify, phaseAmt is not the thing that is directly changing the positions.
+        // phaseAmt is how much mix there is between the origin position and the secondary position.
         isSelected = isWithin
-        this.move(result)
     }
 
     fun move(result: Double) {
-//        println(Global.clock * result)
-        this.phaseAmt = (Global.clock * (result)).map(
-            0.0,
-            10.0,
-            0.0,
-            1.0,
-            true
-        )
+//        this.phaseAmt = (Global.clock * (result)).map(0.0, 10.0, 0.0, 1.0, true)
     }
 
     fun render(drawer: Drawer) {
@@ -70,8 +66,8 @@ class Section(
         drawer.fill = null
         if (this.id == 4){
             drawer.rectangle(thisRect)
-            drawer.rectangle(outer)
         }
+        drawer.circle(thisRect.corner, sectionTracker.value()*100.0)
 //        if (isSelected) drawer.rectangle(thisRect)
     }
 }

@@ -188,7 +188,7 @@ val sections = mutableListOf(
         height * 0.05,
         width * 0.17,
         height * 0.1,
-        headBlock
+        headBlock,
     ),
     Section(
         1,

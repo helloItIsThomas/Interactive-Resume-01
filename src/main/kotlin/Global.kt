@@ -15,6 +15,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 object Global {
+    lateinit var globalThis: Program
     lateinit var tracker: ADSRTracker
     lateinit var drawer: Drawer
     var width by Delegates.notNull<Int>()
