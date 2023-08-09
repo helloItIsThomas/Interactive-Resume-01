@@ -15,19 +15,28 @@ import org.openrndr.shape.Rectangle
 class Section(
     val id: Int,
     var phaseAmt: Double,
-    _x: Double,
-    _y: Double,
-    _w: Double,
-    _h: Double,
+    var _x: Double,
+    var _y: Double,
+    var _w: Double,
+    var _h: Double,
     val txt: MutableList<CustomText>
 ) {
+
+    var sectionTracker = ADSRTracker(globalThis)
+    val thisPeakAttackLv = 50.0
+    val thisSustainTime = 5000
     var thisRect = Rectangle(_x, _y, _w, _h)
+    init {
+        sectionTracker.attack = 0.1
+        sectionTracker.decay = 0.05
+        sectionTracker.sustain = 0.9
+        sectionTracker.release = 0.1
+    }
 //    val outer = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
     var isWithin = false
     var isWithinPrev = false
     var origin = Vector2(0.0, 0.0)
-    var sectionTracker = ADSRTracker(globalThis)
     var isTriggerActive = false
     fun check() {
 //        if(Selector.currentSection == id){
@@ -36,20 +45,17 @@ class Section(
     }
 
     fun getDist(Mouse: Mouse) {
-
         isWithin = thisRect.contains(Mouse.pos)
-        if (isWithinPrev != isWithin){
+        if (isWithinPrev != isWithin) {
             println(isWithin)
             isWithinPrev = isWithin
-            if(isWithin && !isTriggerActive){
+            if(!isWithin && isTriggerActive) {
+                sectionTracker.triggerOff()
+                isTriggerActive = false
+            }
+            if(isWithin && !isTriggerActive) {
                 sectionTracker.triggerOn()
                 isTriggerActive = true
-
-                GlobalScope.launch {
-                    delay(1000)
-                    sectionTracker.triggerOff()
-                    isTriggerActive = false
-                }
             }
         }
         // just to clarify, phaseAmt is not the thing that is directly changing the positions.
@@ -62,12 +68,18 @@ class Section(
     }
 
     fun render(drawer: Drawer) {
+        thisRect = Rectangle(
+            _x,
+            _y,
+            _w + sectionTracker.value() * thisPeakAttackLv,
+            _h
+        )
         drawer.stroke = ColorRGBa.FOREST_GREEN
         drawer.fill = null
         if (this.id == 4){
             drawer.rectangle(thisRect)
         }
-        drawer.circle(thisRect.corner, sectionTracker.value()*100.0)
+        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)
     }
 }
