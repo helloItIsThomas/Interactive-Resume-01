@@ -1,4 +1,4 @@
 
 # Dev Log
 
-### implemented adsr tracker in a way that is probably good enough
+### removed adsr tracker stuff, and moved it to a new branch called adsrAdd-01 
