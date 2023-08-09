@@ -1,6 +1,5 @@
 
 
-import Global.tracker
 import classes.MrLine
 import classes.ParagraphStyle
 import demos.classes.Animation
@@ -46,13 +45,6 @@ fun main() = application {
         MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
 
-        tracker = ADSRTracker(this)
-        tracker.attack = 0.1
-        Global.peakAttackLv = 50.0
-        tracker.decay = 0.05
-        Global.sustainTime = 5000
-        tracker.sustain = 0.9
-        tracker.release = 0.1
 
         extend {
             Global.frameCount = frameCount
@@ -72,6 +64,7 @@ fun main() = application {
                 sections.forEach { e ->
 //                    writerCallSections(e, drawer)
                     writerCallWords(e, drawer)
+
 //                    writerCallChars(e, drawer)
                     e.check()
                     e.render(drawer)
@@ -79,7 +72,7 @@ fun main() = application {
                 }
             }
 
-//            println(elapsedTime)
+            println(elapsedTime)
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
@@ -94,12 +87,7 @@ fun main() = application {
             val myC = LinePath.outline.contour
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
-            drawer.circle(myC.position(MrLine0.newPos), tracker.value() * Global.peakAttackLv)
-            drawer.circle(
-                200.0,
-                200.0,
-                tracker.value() * Global.peakAttackLv
-            )
+            drawer.circle(myC.position(MrLine0.newPos), 5.0)
         }
     }
 }
