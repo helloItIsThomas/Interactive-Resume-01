@@ -26,16 +26,19 @@ class Section(
     val thisPeakAttackLv = 50.0
     val thisSustainTime = 5000
     var thisRect = Rectangle(_x, _y, _w, _h)
+    var varDecay = 0.05
     init {
         sectionTracker.attack = 0.1
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.1
     }
-//    val outer = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
+    val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
     var isWithin = false
+    var isWithinOuter = false
     var isWithinPrev = false
+    var isWithinOuterPrev = false
     var origin = Vector2(0.0, 0.0)
     var isTriggerActive = false
     fun check() {
@@ -46,6 +49,16 @@ class Section(
 
     fun getDist(Mouse: Mouse) {
         isWithin = thisRect.contains(Mouse.pos)
+        isWithinOuter = thisOuter.contains(Mouse.pos)
+
+        if (isWithinOuterPrev != isWithinOuter) {
+            if(isWithinOuter && !isWithin){
+                // Implement
+                // varDecay = distance from any edge of innerRect to mouse,
+                // and scale it to between 0.0 and 1.0
+            }
+        }
+
         if (isWithinPrev != isWithin) {
             println(isWithin)
             isWithinPrev = isWithin
@@ -78,6 +91,7 @@ class Section(
         drawer.fill = null
         if (this.id == 4){
             drawer.rectangle(thisRect)
+            drawer.rectangle(thisOuter)
         }
         drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)
