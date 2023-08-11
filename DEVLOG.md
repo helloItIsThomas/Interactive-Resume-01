@@ -20,4 +20,28 @@ sufficiently understood the project.
 
 ## Remember, phaseAmt is not the thing that is directly changing the positions.
 phaseAmt is how much mix there is between the origin position and the secondary position.
-s
+
+
+## Next Steps
+Here are some suggestions via chatGPT on how to move forward
+
+Certainly! Based on the existing structure of your project and the requirements for the posTwo array, here's a way you might implement it:
+
+Create a Function to Generate the posTwo Array: You may want to create a function that generates a list of Vector2's representing a wiggly or imperfect circle. This array can then be used in each section that requires animated transitions.
+
+Integrate posTwo into Sections or CustomText: Depending on whether you want the animation to apply to entire sections or individual CustomText objects, you could integrate the posTwo array at the corresponding level. Here's how you might do it for both scenarios:
+
+For Sections:
+
+You can add a posTwo field to the Section class, containing the wiggly circle Vector2's.
+Initialize the posTwo field for each section that requires animation, using the function created in step 1.
+Apply the transition logic within the rendering process of the section, using the posTwo array to determine the translation of each word.
+For CustomText:
+
+Similarly, you can add a posTwo field to the CustomText class if you want individual control over each text object.
+Initialize and use the posTwo array within the CustomText rendering logic as needed.
+Control the Transition: Implement the logic that controls the transition between the two states, taking into account the random selection of sections, cursor hover interaction, and the timing described earlier. This might involve additional variables and methods to handle the state transitions and animations for the selected sections or text objects.
+
+By preserving the current structure of text information and integrating the posTwo array where it makes sense (either at the section or CustomText level), you can maintain a clean and organized codebase while adding the desired animation functionality.
+
+These strategies offer a balance between flexibility and maintainability and should align well with your project's goals and existing structure.
