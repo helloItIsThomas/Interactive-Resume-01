@@ -8,6 +8,9 @@ import org.openrndr.draw.writer
 import org.openrndr.math.Vector2
 import org.openrndr.math.mix
 import org.openrndr.writer
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.system.measureTimeMillis
 import kotlin.time.times
 
 
@@ -26,18 +29,22 @@ fun writerCallSections(section: Section, localDraw: Drawer){
     }
 }
 
+
 fun writerCallWords(section: Section, localDraw: Drawer){
     drawer.writer {
         this.box = section.thisRect
-        section.allTxt.forEachIndexed { ii, strBlock: CustomText ->
+        section.allTxt.forEachIndexed { i, strBlock ->
             localDraw.fontMap = strBlock.txtStyle.font
             leading = strBlock.txtStyle.leading
             localDraw.pushStyle()
             localDraw.fill = strBlock.txtStyle.textColor
             localDraw.stroke = null
-            val words: List<String> = strBlock.txtStr.split(" ")
-            words.forEach { word ->
+            val words = strBlock.txtStr.split(" ")
+            words.forEachIndexed { l, word ->
+                drawer.pushTransforms()
+//                drawer.translate(sin(i + l + frameCount*0.005)*100.0, cos(i + l + frameCount*0.005)*100.0)
                 text("$word ")
+                drawer.popTransforms()
             }
             localDraw.popStyle()
             gaplessNewLine()
