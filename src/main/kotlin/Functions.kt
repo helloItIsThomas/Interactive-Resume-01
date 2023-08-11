@@ -12,7 +12,7 @@ import kotlin.time.times
 
 fun writerCallSections(section: Section, localDraw: Drawer){
     drawer.writer {
-        this.box = section.thisRect
+        this.box = section.thisInner
         section.txt.forEach { e ->
             localDraw.fontMap = e.style.font
             leading = e.style.leading
@@ -27,7 +27,7 @@ fun writerCallSections(section: Section, localDraw: Drawer){
 
 fun writerCallWords(section: Section, localDraw: Drawer){
     drawer.writer {
-        this.box = section.thisRect
+        this.box = section.thisInner
         section.txt.forEach{ e ->
             localDraw.fontMap = e.style.font
             leading = e.style.leading
@@ -55,7 +55,7 @@ fun writerCallWords(section: Section, localDraw: Drawer){
 
 fun writerCallChars(section: Section, localDraw: Drawer) {
     localDraw.writer {
-        this.box = section.thisRect
+        this.box = section.thisInner
         section.txt.forEach { e ->
             localDraw.fontMap = e.style.font
             this.leading = e.style.leading

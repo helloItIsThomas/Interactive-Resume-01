@@ -1,5 +1,6 @@
 package classes
 
+import Global.drawer
 import Global.globalThis
 import Mouse
 import kotlinx.coroutines.GlobalScope
@@ -10,7 +11,11 @@ import org.openrndr.draw.Drawer
 import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
+import org.openrndr.math.clamp
+import org.openrndr.math.map
 import org.openrndr.shape.Rectangle
+import java.util.Vector
+import kotlin.math.sqrt
 
 class Section(
     val id: Int,
@@ -25,7 +30,7 @@ class Section(
     var sectionTracker = ADSRTracker(globalThis)
     val thisPeakAttackLv = 50.0
     val thisSustainTime = 5000
-    var thisRect = Rectangle(_x, _y, _w, _h)
+    var thisInner = Rectangle(_x, _y, _w, _h)
     var varDecay = 0.05
     init {
         sectionTracker.attack = 0.1
@@ -33,7 +38,7 @@ class Section(
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.1
     }
-    val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
+    val thisOuter = thisInner.offsetEdges(thisInner.width * 0.1, thisInner.height * 0.1)
     var isSelected = false
     var isWithin = false
     var isWithinOuter = false
@@ -48,16 +53,39 @@ class Section(
     }
 
     fun getDist(Mouse: Mouse) {
-        isWithin = thisRect.contains(Mouse.pos)
+        isWithin = thisInner.contains(Mouse.pos)
         isWithinOuter = thisOuter.contains(Mouse.pos)
 
-        if (isWithinOuterPrev != isWithinOuter) {
-            if(isWithinOuter && !isWithin){
+        val widthOffset = thisInner.width * 0.1
+        val heightOffset = thisInner.height * 0.1
+        val maxDistance = sqrt((widthOffset * widthOffset) + (heightOffset * heightOffset))
+
+        val closestXInner = Mouse.pos.x.clamp(thisInner.x, thisInner.x + thisInner.width)
+        val closestYInner = Mouse.pos.y.clamp(thisInner.y, thisInner.y + thisInner.height)
+        val closestPointInner = Vector2(closestXInner, closestYInner)
+
+        val closestXOuter = Mouse.pos.x.clamp(thisOuter.x, thisOuter.x + thisOuter.width)
+        val closestYOuter = Mouse.pos.y.clamp(thisOuter.y, thisOuter.y + thisOuter.height)
+        val closestPointOuter = Vector2(closestXOuter, closestYOuter)
+
+        val deleteMeRaw = (closestPointOuter - closestPointInner).length
+        val mappedDistance = deleteMeRaw / maxDistance // This will map deleteMe from 0.0 to 1.0
+
+
+        varDecay = mappedDistance.map(0.0, 1.0, 1.0, 0.0)
+
+//        println( sectionTracker.release )
+        println( varDecay )
+
+        if(isWithinOuter && !isWithin){
+            if (isWithinOuterPrev != isWithinOuter) {
                 // Implement
                 // varDecay = distance from any edge of innerRect to mouse,
                 // and scale it to between 0.0 and 1.0
             }
         }
+        drawer.strokeWeight = 1.0
+        drawer.lineSegment(closestPointInner, closestPointOuter)
 
         if (isWithinPrev != isWithin) {
             println(isWithin)
@@ -81,20 +109,20 @@ class Section(
     }
 
     fun render(drawer: Drawer) {
-        thisRect = Rectangle(
+        thisInner = Rectangle(
             _x,
             _y,
-            _w + sectionTracker.value() * thisPeakAttackLv,
+            _w, // + sectionTracker.value() * thisPeakAttackLv,
             _h
         )
-        drawer.stroke = ColorRGBa.FOREST_GREEN
+        drawer.stroke = ColorRGBa.BLACK
         drawer.fill = null
         if (this.id == 4){
-            drawer.rectangle(thisRect)
-            drawer.rectangle(thisOuter)
+            drawer.rectangle(thisInner)
+//            drawer.rectangle(thisOuter)
         }
-        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
-//        if (isSelected) drawer.rectangle(thisRect)
+        drawer.circle(thisInner.corner, sectionTracker.value() * thisPeakAttackLv)
+//        if (isSelected) drawer.rectangle(thisInner)
     }
 }
 
