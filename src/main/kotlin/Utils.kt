@@ -10,6 +10,8 @@ fun Program.setupKeyboardListeners() {
         if (event.key == KEY_SPACEBAR) {
             val randomNumber = random(0.0, 5.0)
             Selector.check(randomNumber)
+            sections[4].sectionTracker.triggerOn()
+            sections[4].isTriggerActive = true
         }
     }
 }

@@ -28,10 +28,10 @@ class Section(
     var thisRect = Rectangle(_x, _y, _w, _h)
     var varDecay = 0.05
     init {
-        sectionTracker.attack = 0.1
+        sectionTracker.attack = 5.1
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
-        sectionTracker.release = 0.1
+        sectionTracker.release = 0.075
     }
     val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
@@ -53,6 +53,8 @@ class Section(
 
         if (isWithinOuterPrev != isWithinOuter) {
             if(isWithinOuter && !isWithin){
+                sectionTracker.triggerOff()
+                isTriggerActive = false
                 // Implement
                 // varDecay = distance from any edge of innerRect to mouse,
                 // and scale it to between 0.0 and 1.0
@@ -60,15 +62,14 @@ class Section(
         }
 
         if (isWithinPrev != isWithin) {
-            println(isWithin)
             isWithinPrev = isWithin
             if(!isWithin && isTriggerActive) {
-                sectionTracker.triggerOff()
-                isTriggerActive = false
+//                sectionTracker.triggerOff()
+//                isTriggerActive = false
             }
             if(isWithin && !isTriggerActive) {
-                sectionTracker.triggerOn()
-                isTriggerActive = true
+//                sectionTracker.triggerOn()
+//                isTriggerActive = true
             }
         }
         // just to clarify, phaseAmt is not the thing that is directly changing the positions.
