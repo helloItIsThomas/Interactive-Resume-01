@@ -1,6 +1,7 @@
 import Global.drawer
 import Global.frameCount
 import Global.vecList
+import classes.CustomText
 import classes.Section
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.writer
@@ -13,12 +14,12 @@ import kotlin.time.times
 fun writerCallSections(section: Section, localDraw: Drawer){
     drawer.writer {
         this.box = section.thisRect
-        section.txt.forEach { e ->
-            localDraw.fontMap = e.style.font
-            leading = e.style.leading
-            localDraw.fill = e.style.textColor
+        section.allTxt.forEach { e ->
+            localDraw.fontMap = e.txtStyle.font
+            leading = e.txtStyle.leading
+            localDraw.fill = e.txtStyle.textColor
             localDraw.stroke = null
-            text(e.txt)
+            text(e.txtStr)
             gaplessNewLine()
             gaplessNewLine()
         }
@@ -28,24 +29,16 @@ fun writerCallSections(section: Section, localDraw: Drawer){
 fun writerCallWords(section: Section, localDraw: Drawer){
     drawer.writer {
         this.box = section.thisRect
-        section.txt.forEach{ e ->
-            localDraw.fontMap = e.style.font
-            leading = e.style.leading
+        section.allTxt.forEachIndexed { ii, strBlock: CustomText ->
+            localDraw.fontMap = strBlock.txtStyle.font
+            leading = strBlock.txtStyle.leading
             localDraw.pushStyle()
-            localDraw.fill = e.style.textColor
+            localDraw.fill = strBlock.txtStyle.textColor
             localDraw.stroke = null
-            val words = e.txt.split("\\s+".toRegex())
-
-
-            words.forEachIndexed { i, word ->
-                if(section.id == 4) {
-                    localDraw.pushTransforms()
-                    localDraw.translate(mix(section.origin, VecList.vecList[0] * 0.5, section.phaseAmt))
-                    text(word)
-                    localDraw.popTransforms()
-                } else text(word)
+            val words: List<String> = strBlock.txtStr.split(" ")
+            words.forEach { word ->
+                text("$word ")
             }
-
             localDraw.popStyle()
             gaplessNewLine()
             gaplessNewLine()
@@ -56,14 +49,14 @@ fun writerCallWords(section: Section, localDraw: Drawer){
 fun writerCallChars(section: Section, localDraw: Drawer) {
     localDraw.writer {
         this.box = section.thisRect
-        section.txt.forEach { e ->
-            localDraw.fontMap = e.style.font
-            this.leading = e.style.leading
+        section.allTxt.forEach { e ->
+            localDraw.fontMap = e.txtStyle.font
+            this.leading = e.txtStyle.leading
             localDraw.pushStyle()
             localDraw.stroke = null
             localDraw.pushTransforms()
 
-            val words = e.txt.split("\\s+".toRegex())
+            val words = e.txtStr.split("\\s+".toRegex())
 //            text(words[(frameCount*0.05).toInt() % words.size])
             words.forEachIndexed { ii, word ->
                 val index = (ii + frameCount*0.1) % vecList.size

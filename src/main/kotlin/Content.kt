@@ -64,7 +64,7 @@ val eduBlock = mutableListOf(
 )
 val invBlock0 = mutableListOf(
     CustomText(
-        "\ninvolvement",
+        "involvement",
         h1
     ),
     CustomText(

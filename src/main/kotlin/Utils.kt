@@ -12,6 +12,10 @@ fun Program.setupKeyboardListeners() {
             Selector.check(randomNumber)
             sections[4].sectionTracker.triggerOn()
             sections[4].isTriggerActive = true
+//            sections.forEach { e ->
+//                e.sectionTracker.triggerOn()
+//                e.isTriggerActive = true
+//            }
         }
     }
 }

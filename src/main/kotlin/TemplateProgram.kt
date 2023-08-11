@@ -69,9 +69,11 @@ fun main() = application {
             drawer.fill = ColorRGBa.BLACK
 
             sections[4].getDist(Mouse)
+            writerCallWords(sections[4], drawer)
+
             val elapsedTime = measureTimeMillis {
                 sections.forEach { e ->
-                    writerCallSections(e, drawer)
+//                    writerCallSections(e, drawer)
 //                    writerCallWords(e, drawer)
 //                    writerCallChars(e, drawer)
                     e.check()

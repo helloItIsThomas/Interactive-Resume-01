@@ -2,15 +2,13 @@ package classes
 
 import Global.globalThis
 import Mouse
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
+import kotlin.properties.Delegates
 
 class Section(
     val id: Int,
@@ -19,20 +17,35 @@ class Section(
     var _y: Double,
     var _w: Double,
     var _h: Double,
-    val txt: MutableList<CustomText>
+    val allTxt: MutableList<CustomText>
 ) {
-
     var sectionTracker = ADSRTracker(globalThis)
     val thisPeakAttackLv = 50.0
     val thisSustainTime = 5000
     var thisRect = Rectangle(_x, _y, _w, _h)
     var varDecay = 0.05
+
+    var numWords by Delegates.notNull<Int>()
+    var numChars by Delegates.notNull<Int>()
+
     init {
-        sectionTracker.attack = 5.1
+        if(this.id == 4) {
+            this.allTxt.forEach { t ->
+                val words: List<String> = t.txtStr.split(" ")
+                numWords = words.size
+                println(numWords)
+            }
+        }
+
+        sectionTracker.attack = 1.1
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.075
+        if(this.id == 4){
+            println("id: " + this.id + " " +  "numWords: " + numWords)
+        }
     }
+
     val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
     var isWithin = false
@@ -93,6 +106,7 @@ class Section(
         if (this.id == 4){
             drawer.rectangle(thisRect)
             drawer.rectangle(thisOuter)
+//            println(sectionTracker.value())
         }
         drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)

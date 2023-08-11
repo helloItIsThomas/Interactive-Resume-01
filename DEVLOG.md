@@ -4,18 +4,14 @@
 I guess I can put my notes in here
 ### Hello World
 
+Ok,
+Next let's set a new position for each piece of text in sections[4]
+Then, we will interpolate to that position on spacebar press.
 
-And then perhaps the decay time can be dynamically affected by
-the distance away from the inner rect while still in the outer rect.
- 
-I have some notes on what to do next on line 57
-in Section.kt
-
-Ok, this idea doesn't seem to be working 
-ie abandonedDynamicDecay-01
-so I will be moving forward with two states,
-trigger on, and trigger off,
-and abandon the idea that there is a gradient trigger off.
+Ok I have to cut the grass now,
+but it looks like I have the word counter working correctly.
+So assuming the word counter is running on the same logic as the word drawer function,
+then the function will be drawing each word individually.
 
 
 ## Remember, phaseAmt is not the thing that is directly changing the positions.
