@@ -84,34 +84,20 @@ class Section(
 //        }
     }
 
+
+
     fun getDist(Mouse: Mouse) {
         isWithin = thisRect.contains(Mouse.pos)
-        isWithinOuter = thisOuter.contains(Mouse.pos)
-
-        if (isWithinOuterPrev != isWithinOuter) {
-            if(isWithinOuter && !isWithin){
+        if (isWithin != isWithinPrev) {
+            if (isWithin) {
+                isWithinPrev = isWithin
+                sectionTracker.triggerOn()
+            } else {
+                isWithinPrev = isWithin
                 sectionTracker.triggerOff()
-                isTriggerActive = false
-                // Implement
-                // varDecay = distance from any edge of innerRect to mouse,
-                // and scale it to between 0.0 and 1.0
             }
+            println(isWithin)
         }
-
-        if (isWithinPrev != isWithin) {
-            isWithinPrev = isWithin
-            if(!isWithin && isTriggerActive) {
-//                sectionTracker.triggerOff()
-//                isTriggerActive = false
-            }
-            if(isWithin && !isTriggerActive) {
-//                sectionTracker.triggerOn()
-//                isTriggerActive = true
-            }
-        }
-        // just to clarify, phaseAmt is not the thing that is directly changing the positions.
-        // phaseAmt is how much mix there is between the origin position and the secondary position.
-        isSelected = isWithin
     }
 
     fun move(result: Double) {
