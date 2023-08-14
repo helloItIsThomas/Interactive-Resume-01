@@ -8,7 +8,11 @@ import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Rectangle
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.properties.Delegates
+import kotlin.random.Random
+
 
 class Section(
     val id: Int,
@@ -25,26 +29,46 @@ class Section(
     var thisRect = Rectangle(_x, _y, _w, _h)
     var varDecay = 0.05
 
+
+//    var numChars by Delegates.notNull<Int>()
     var numWords by Delegates.notNull<Int>()
-    var numChars by Delegates.notNull<Int>()
+
+    val posWords: MutableList<Vector2> = mutableListOf()
 
     init {
-        if(this.id == 4) {
+        println("RUNNING INITIALIZER")
+//        if(this.id == 4) {
             this.allTxt.forEach { t ->
                 val words: List<String> = t.txtStr.split(" ")
                 numWords = words.size
                 println(numWords)
             }
-        }
+//        }
+        println("NUM WORDS: " + numWords)
 
         sectionTracker.attack = 1.1
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.075
+
         if(this.id == 4){
             println("id: " + this.id + " " +  "numWords: " + numWords)
         }
+
+        val angleIncrement = 360.0 / numWords
+        val wiggleAmount = 30.0
+        val radius = thisRect.width*0.75
+
+        for (n in 0.. numWords){
+            val angle = Math.toRadians(n * angleIncrement)
+            val x = radius * cos(angle) + Random.nextDouble(-wiggleAmount, wiggleAmount)
+            val y = radius * sin(angle) + Random.nextDouble(-wiggleAmount, wiggleAmount)
+            posWords.add(Vector2(x, y))
+        }
+        println("ENDING SECTION")
     }
+
+
 
     val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
@@ -112,4 +136,3 @@ class Section(
 //        if (isSelected) drawer.rectangle(thisRect)
     }
 }
-

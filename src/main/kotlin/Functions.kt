@@ -1,3 +1,5 @@
+
+
 import Global.drawer
 import Global.frameCount
 import Global.vecList
@@ -43,6 +45,7 @@ fun writerCallWords(section: Section, localDraw: Drawer){
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
 //                drawer.translate(sin(i + l + frameCount*0.005)*100.0, cos(i + l + frameCount*0.005)*100.0)
+                drawer.translate(section.posWords[l])
                 text("$word ")
                 drawer.popTransforms()
             }
