@@ -43,7 +43,7 @@ class Section(
             numWords += words.size
         }
 
-        tempGuideCirc = Circle((_w*0.33), (_h*0.33), _w*0.5)
+        tempGuideCirc = Circle((_x + _w*0.5), (_y + _h*0.5), _w*0.5)
         wordPos = tempGuideCirc.contour.equidistantPositions(numWords - 1).toMutableList()
 
         sectionTracker.attack = 1.1

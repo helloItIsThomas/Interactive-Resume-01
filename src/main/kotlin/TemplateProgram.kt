@@ -78,20 +78,21 @@ fun main() = application {
             sections[4].check()
             sections[4].render(drawer)
             sections[4].getDist(Mouse)
-//            println(sections[4].numWords)
 
             val elapsedTime = measureTimeMillis {
                 sections.forEach { e ->
-//                    writerCallSections(e, drawer)
+                    if(e.id != 4){
+                        writerCallSections(e, drawer)
+                    }
 //                    writerCallWords(e, drawer)
 //                    writerCallChars(e, drawer)
-//                    e.check()
-//                    e.render(drawer)
+                    e.check()
+                    e.render(drawer)
                     MrLine0.check()
                 }
             }
 
-//            println(elapsedTime)
+            println(elapsedTime)
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK

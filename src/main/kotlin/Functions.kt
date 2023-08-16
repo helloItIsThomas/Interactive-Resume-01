@@ -2,6 +2,7 @@ import Global.drawer
 import Global.frameCount
 import Global.vecList
 import classes.CustomText
+import classes.MrLine
 import classes.Section
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.writer
@@ -51,13 +52,12 @@ fun writerCallWords(section: Section, localDraw: Drawer){
 
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
+//                drawer.circle(this.cursor.x, this.cursor.y, 2.0)
                 val temp2 = Vector2(
-                    section.wordPos[globalWordIndex].x,
-                    section.wordPos[globalWordIndex].y
+                    section.wordPos[globalWordIndex].x - this.cursor.x,
+                    section.wordPos[globalWordIndex].y - this.cursor.y
                 )
-                drawer.translate(mix(section.origin, temp2,
-                    (frameCount*0.0075) % 1.0
-                    ))
+                drawer.translate(mix(section.origin, temp2, (frameCount*0.0075) % 1.0))
                 text("$word ")
                 globalWordIndex++
                 drawer.popTransforms()
