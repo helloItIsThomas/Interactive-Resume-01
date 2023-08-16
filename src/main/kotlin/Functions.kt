@@ -39,11 +39,22 @@ fun writerCallWords(section: Section, localDraw: Drawer){
             localDraw.pushStyle()
             localDraw.fill = strBlock.txtStyle.textColor
             localDraw.stroke = null
-            val words = strBlock.txtStr.split(" ")
+
+            var words = strBlock.txtStr.split(" ")
+
+
+//            println("words.size in writerCallWords is " + words.size + " for " + section.id)
+
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
 //                drawer.translate(sin(i + l + frameCount*0.005)*100.0, cos(i + l + frameCount*0.005)*100.0)
+//                println(section.wordPos)
+//                println(l)
+//                println(l)
+
+//                drawer.circle(section.wordPos[27], 10.0)
                 text("$word ")
+
                 drawer.popTransforms()
             }
             localDraw.popStyle()
@@ -74,7 +85,6 @@ fun writerCallChars(section: Section, localDraw: Drawer) {
                 word.forEach { char ->
                     this.text(char.toString())
                 }
-//
 //                val moveVect = mix(state1, state2, 1.0)
 //                drawer.text(words[(frameCount*0.05).toInt() % words.size])
             }
