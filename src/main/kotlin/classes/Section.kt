@@ -39,32 +39,18 @@ class Section(
     init {
         this.allTxt.forEach { t ->
             val words: List<String> = t.txtStr.split(" ")
-            // so I think we fixed it by doing this +=,
-            // because now it should be adding the words from each sub-section
-            // ( sub-section meaning the part that determines what styling to set the text with )
-            // together into a variable numWords that represents the number of all words in the section.
-//            numWords += words.size
-            // ok lets try it the other way.
             parentNumWords.add(words.size)
-            // The above holds a list of integers
-            // that represents the number of words in each sub-section
-            // for this section.
-            // so, if this.id == 4,
-            // then a println would return [1, 3, 15, 8],
-            // representing 4 distinct sub-sections to change the drawer to 4 different styles,
-            // with 1 word in the first sub-section, 3 words in the second, etc.
-        }
-        if(this.id == 4){
-            println(parentNumWords)
+            numWords += words.size
         }
 
-        tempGuideCirc = Circle(_x + (_w*0.5), _y + (_h*0.5), _w*0.8)
-        wordPos = tempGuideCirc.contour.equidistantPositions(numWords).toMutableList()
+        tempGuideCirc = Circle((_w*0.33), (_h*0.33), _w*0.5)
+        wordPos = tempGuideCirc.contour.equidistantPositions(numWords - 1).toMutableList()
 
         sectionTracker.attack = 1.1
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.075
+
     }
 
     val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)

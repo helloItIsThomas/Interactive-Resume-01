@@ -25,3 +25,23 @@ I am drawing all the words from each sub-section for each section.
 
 So I have to figure out what this means next...
 
+So now I have the total number of words in a section,
+as well as the number sub-sections that compose a section,
+and how many words are in each sub-section.
+
+What do I ultimatley want to do?
+I want a circle that is divided into numWords points,
+and then I want to populate those points one by one
+with each word in each of the sub-sections.
+
++++
+
+OK i think it's working as expected.
+The only difference is that I did not account for the fact
+that translate is translating to a circle position
+from the position that the word is currently at.
+So when mix is at 1.0, it may not look like a circle,
+because it's the circle point offset by the position the text was set at.
+
+I think I should move on for now, but it's not what I had in mind.
+Perhaps Slack will have an answer for me.

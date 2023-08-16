@@ -5,6 +5,7 @@ import classes.CustomText
 import classes.Section
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.writer
+import org.openrndr.extra.parameters.listParameters
 import org.openrndr.math.Vector2
 import org.openrndr.math.mix
 import org.openrndr.writer
@@ -31,8 +32,14 @@ fun writerCallSections(section: Section, localDraw: Drawer){
 
 
 fun writerCallWords(section: Section, localDraw: Drawer){
+    var globalWordIndex = 0
     drawer.writer {
         this.box = section.thisRect
+        // here, below, is where we are handling
+        // a full section only through individual sub-sections.
+        // so, i should go to from 0 - 3 in the case of section 4.
+        // that's correct.
+
         section.allTxt.forEachIndexed { i, strBlock ->
             localDraw.fontMap = strBlock.txtStyle.font
             leading = strBlock.txtStyle.leading
@@ -40,21 +47,19 @@ fun writerCallWords(section: Section, localDraw: Drawer){
             localDraw.fill = strBlock.txtStyle.textColor
             localDraw.stroke = null
 
-            var words = strBlock.txtStr.split(" ")
-
-
-//            println("words.size in writerCallWords is " + words.size + " for " + section.id)
+            val words = strBlock.txtStr.split(" ")
 
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
-//                drawer.translate(sin(i + l + frameCount*0.005)*100.0, cos(i + l + frameCount*0.005)*100.0)
-//                println(section.wordPos)
-//                println(l)
-//                println(l)
-
-//                drawer.circle(section.wordPos[27], 10.0)
+                val temp2 = Vector2(
+                    section.wordPos[globalWordIndex].x,
+                    section.wordPos[globalWordIndex].y
+                )
+                drawer.translate(mix(section.origin, temp2,
+                    (frameCount*0.0075) % 1.0
+                    ))
                 text("$word ")
-
+                globalWordIndex++
                 drawer.popTransforms()
             }
             localDraw.popStyle()
