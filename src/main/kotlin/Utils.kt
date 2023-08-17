@@ -8,15 +8,14 @@ import org.openrndr.extra.noise.random
 fun Program.setupKeyboardListeners() {
     keyboard.keyDown.listen { event ->
         if (event.key == KEY_SPACEBAR) {
-            val randomNumber = random(0.0, 5.0)
-            Selector.check(randomNumber)
-            sections[4].sectionTracker.triggerOn()
-            sections[4].isTriggerActive = true
-//            sections.forEach { e ->
-//                e.sectionTracker.triggerOn()
-//                e.isTriggerActive = true
-//            }
+            sendRandomInt()
         }
     }
+}
+
+fun sendRandomInt(){
+    val randomNumber = random(1.0, Global.numSections.toDouble()).toInt()
+    println(randomNumber)
+    Selector.check(randomNumber)
 }
 

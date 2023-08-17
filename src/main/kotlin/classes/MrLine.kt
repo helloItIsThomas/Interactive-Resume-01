@@ -38,7 +38,7 @@ class MrLine : Keyframer() {
     }
 
     fun seek() {
-        newPos = mix(currentPos, stops[Selector.currentSection], lineSlider0)
+//        newPos = mix(currentPos, stops[Global.selection], lineSlider0)
     }
 
     fun check() {

@@ -10,6 +10,7 @@ import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
 import org.openrndr.shape.Rectangle
+import sendRandomInt
 import kotlin.properties.Delegates
 
 class Section(
@@ -56,34 +57,36 @@ class Section(
         wordPosOverTime = generateFlock(numWords)
     }
 
-    val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
     var isWithin = false
-    var isWithinOuter = false
     var isWithinPrev = false
-    var isWithinOuterPrev = false
     var origin = Vector2(0.0, 0.0)
     var isTriggerActive = false
 
     fun check() {
-//        println("wordPos.size for " +  this.id + " is " + wordPos.size)
-//        println("numWords count for " +  this.id + " is " + numWords)
+        isSelected = this.id == Global.selection
+    }
+
+    fun intro() {
+        sectionTracker.triggerOn()
     }
 
     fun getDist(Mouse: Mouse) {
         isWithin = thisRect.contains(Mouse.pos)
         if(isWithin != isWithinPrev){
             if(isWithin){
-                isWithinPrev = isWithin
-                sectionTracker.triggerOn()
+                if(isSelected){
+                    isWithinPrev = isWithin
+                    sectionTracker.triggerOff()
+                    println("trigger off")
+                    sendRandomInt()
+                }
             } else{
                 isWithinPrev = isWithin
-                sectionTracker.triggerOff()
             }
         }
         // just to clarify, phaseAmt is not the thing that is directly changing the positions.
         // phaseAmt is how much mix there is between the origin position and the secondary position.
-        isSelected = isWithin
     }
 
     fun move(result: Double) {
@@ -91,18 +94,19 @@ class Section(
     }
 
     fun render(drawer: Drawer) {
+        this.phaseAmt = sectionTracker.value()
         thisRect = Rectangle(
             _x,
             _y,
-            _w + sectionTracker.value() * thisPeakAttackLv,
+            _w, // + sectionTracker.value() * thisPeakAttackLv,
             _h
         )
         drawer.stroke = ColorRGBa.FOREST_GREEN
         drawer.fill = null
-        if (this.id == 4){
-//            drawer.rectangle(thisRect)
+//        if (this.id == 4){
+            drawer.rectangle(thisRect)
 //            drawer.rectangle(thisOuter)
-        }
+//        }
 //        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)
     }

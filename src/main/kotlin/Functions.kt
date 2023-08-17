@@ -47,8 +47,6 @@ fun writerCallWords(section: Section, localDraw: Drawer){
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
 
-//                tempGuideCirc = Circle((_x + _w*0.5), (_y + _h*0.5), _w*0.5)
-
                 val temp2 = Vector2(
                     section.wordPosOverTime[globalWordIndex][
                         (((Global.animation.pathSlider * 60.0)).toInt()) % 60
@@ -57,13 +55,11 @@ fun writerCallWords(section: Section, localDraw: Drawer){
                         (((Global.animation.pathSlider * 60.0)).toInt()) % 60
                     ].y - this.cursor.y + (section._y + section._h*0.5),
                 )
-//                val temp2 = Vector2(
-//                    section.wordPos[globalWordIndex].x - this.cursor.x,
-//                    section.wordPos[globalWordIndex].y - this.cursor.y
-//                )
+
                 drawer.translate(mix(section.origin, temp2,
-                    Global.animation.pathSlider
-//                    1.0
+                    section.phaseAmt
+//                    Global.animation.pathSlider
+//                    0.0
 //                    (frameCount*0.0075) % 1.0
                 ))
                 text("$word ")

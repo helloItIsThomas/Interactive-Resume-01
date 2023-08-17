@@ -4,17 +4,12 @@ import Global.animation
 import Global.tracker
 import classes.MrLine
 import classes.ParagraphStyle
-import demos.classes.Animation
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.loadFont
-import org.openrndr.extra.envelopes.ADSR
 import org.openrndr.extra.envelopes.ADSRTracker
-import org.openrndr.ffmpeg.ScreenRecorder
 import org.openrndr.math.IntVector2
 import org.openrndr.math.Vector2
-import org.openrndr.shape.ShapeContour
-import org.openrndr.svg.loadSVG
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -45,6 +40,7 @@ fun main() = application {
         Global.h32 = ParagraphStyle(Global.monoBold, ColorRGBa.BLACK, 1.2)
         Global.h31 = ParagraphStyle(Global.monoBold2, ColorRGBa.BLACK, 1.2)
         Global.h1 = ParagraphStyle(Global.maruMini, ColorRGBa.BLACK, 0.1)
+        Global.numSections = 9
 
 
         val MrLine0 = MrLine()
@@ -65,14 +61,18 @@ fun main() = application {
 //            frameRate = 120
 //            maximumDuration =  10.0
 //        }
-
+        println("numSections = " + Global.numSections)
         extend {
+            if(frameCount == 0){
+                sendRandomInt()
+                println("initial sendRandomInt() fired")
+            }
             Global.frameCount = frameCount
             Global.clock = (Global.frameCount*0.05)
             MrLine0.core = frameCount.toDouble()
             MrLine0.update()
             drawer.clear(ColorRGBa.WHITE)
-            animation(((frameCount * 0.002) ) % 2.0)
+            animation(((frameCount * 0.002) ) % 1.0)
             MrLine0(((frameCount * 0.007) ) % 2.0)
             Mouse.pos = mouse.position
             drawer.circle(Mouse.pos, Mouse.rad)
@@ -98,13 +98,14 @@ fun main() = application {
                     writerCallWords(e, drawer)
 
 //                    writerCallChars(e, drawer)
+                    e.getDist(Mouse)
                     e.check()
                     e.render(drawer)
                     MrLine0.check()
                 }
             }
 
-            println(elapsedTime)
+//            println(elapsedTime)
 
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
