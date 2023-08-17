@@ -1,77 +1,107 @@
 package classes
 
+import Global.globalThis
 import Mouse
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.color.presets.FOREST_GREEN
+import org.openrndr.extra.envelopes.ADSRTracker
+import org.openrndr.extra.noise.random
 import org.openrndr.math.Vector2
-import org.openrndr.math.map
+import org.openrndr.shape.Circle
 import org.openrndr.shape.Rectangle
+import kotlin.properties.Delegates
 
 class Section(
     val id: Int,
     var phaseAmt: Double,
-    _x: Double,
-    _y: Double,
-    _w: Double,
-    _h: Double,
-    val txt: MutableList<CustomText>
+    var _x: Double,
+    var _y: Double,
+    var _w: Double,
+    var _h: Double,
+    val allTxt: MutableList<CustomText>
 ) {
+    var sectionTracker = ADSRTracker(globalThis)
+    val thisPeakAttackLv = 50.0
+    val thisSustainTime = 5000
     var thisRect = Rectangle(_x, _y, _w, _h)
-    val outer = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
+    var varDecay = 0.05
+
+    var wordPos = mutableListOf<Vector2>()
+
+    var parentNumWords = mutableListOf<Int>()
+    // we are never not drawing all the text in a given section at once.
+    // so we should be able to have one numWords variable.
+    var numWords = 0
+    var numChars by Delegates.notNull<Int>()
+    var tempGuideCirc: Circle
+
+    init {
+        this.allTxt.forEach { t ->
+            val words: List<String> = t.txtStr.split(" ")
+            parentNumWords.add(words.size)
+            numWords += words.size
+        }
+
+        tempGuideCirc = Circle((_x + _w*0.5), (_y + _h*0.5), _w*0.5)
+
+        wordPos = tempGuideCirc.contour.equidistantPositions(numWords).toMutableList()
+
+        sectionTracker.attack = 1.1
+        sectionTracker.decay = 0.05
+        sectionTracker.sustain = 0.9
+        sectionTracker.release = 0.075
+
+    }
+
+    val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)
     var isSelected = false
+    var isWithin = false
+    var isWithinOuter = false
+    var isWithinPrev = false
+    var isWithinOuterPrev = false
     var origin = Vector2(0.0, 0.0)
+    var isTriggerActive = false
+
     fun check() {
-//        if(Selector.currentSection == id){
-//            isSelected = true
-//        }
+//        println("wordPos.size for " +  this.id + " is " + wordPos.size)
+//        println("numWords count for " +  this.id + " is " + numWords)
     }
 
     fun getDist(Mouse: Mouse) {
-        val isWithin = thisRect.contains(Mouse.pos)
-        val isClose = outer.contains(Mouse.pos)
-
-        val i = thisRect
-        val p = Mouse.pos
-        val result = if (outer.contains(p)) minOf(
-            1.0,
-            maxOf(
-                0.0,
-                minOf(
-                    (p.x - outer.x) / (i.x - outer.x),
-                    (outer.x + outer.width - p.x) / (outer.x + outer.width - i.x - i.width),
-                    (p.y - outer.y) / (i.y - outer.y),
-                    (outer.y + outer.height - p.y) / (outer.y + outer.height - i.y - i.height)
-                )
-            )
-        ) else 0.0
-
-        // at the moment we are doing something wrong
-        // because we don't know exactly what we are trying to achieve.
-        // take a break and then look at this phase handling  with fresh eyes.
-
+        isWithin = thisRect.contains(Mouse.pos)
+        if(isWithin != isWithinPrev){
+            if(isWithin){
+                isWithinPrev = isWithin
+                sectionTracker.triggerOn()
+            } else{
+                isWithinPrev = isWithin
+                sectionTracker.triggerOff()
+            }
+        }
+        // just to clarify, phaseAmt is not the thing that is directly changing the positions.
+        // phaseAmt is how much mix there is between the origin position and the secondary position.
         isSelected = isWithin
-        this.move(result)
     }
 
     fun move(result: Double) {
-//        println(Global.clock * result)
-        this.phaseAmt = (Global.clock * (result)).map(
-            0.0,
-            10.0,
-            0.0,
-            1.0,
-            true
-        )
+//        this.phaseAmt = (Global.clock * (result)).map(0.0, 10.0, 0.0, 1.0, true)
     }
 
     fun render(drawer: Drawer) {
+        thisRect = Rectangle(
+            _x,
+            _y,
+            _w + sectionTracker.value() * thisPeakAttackLv,
+            _h
+        )
         drawer.stroke = ColorRGBa.FOREST_GREEN
         drawer.fill = null
         if (this.id == 4){
-            drawer.rectangle(thisRect)
-            drawer.rectangle(outer)
+//            drawer.rectangle(thisRect)
+//            drawer.rectangle(thisOuter)
         }
+//        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)
     }
 }

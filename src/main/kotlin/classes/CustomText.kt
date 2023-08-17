@@ -4,8 +4,8 @@ import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.FontImageMap
 
 data class CustomText(
-    val txt: String,
-    val style: ParagraphStyle
+    val txtStr: String,
+    val txtStyle: ParagraphStyle
 )
 
 data class ParagraphStyle(
