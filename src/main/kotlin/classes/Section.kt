@@ -44,7 +44,8 @@ class Section(
         }
 
         tempGuideCirc = Circle((_x + _w*0.5), (_y + _h*0.5), _w*0.5)
-        wordPos = tempGuideCirc.contour.equidistantPositions(numWords - 1).toMutableList()
+
+        wordPos = tempGuideCirc.contour.equidistantPositions(numWords).toMutableList()
 
         sectionTracker.attack = 1.1
         sectionTracker.decay = 0.05
@@ -97,11 +98,10 @@ class Section(
         drawer.stroke = ColorRGBa.FOREST_GREEN
         drawer.fill = null
         if (this.id == 4){
-            drawer.rectangle(thisRect)
-            drawer.rectangle(thisOuter)
-//            println(sectionTracker.value())
+//            drawer.rectangle(thisRect)
+//            drawer.rectangle(thisOuter)
         }
-        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
+//        drawer.circle(thisRect.corner, sectionTracker.value() * thisPeakAttackLv)
 //        if (isSelected) drawer.rectangle(thisRect)
     }
 }

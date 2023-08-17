@@ -2,6 +2,7 @@
 import Global.height
 import Global.width
 import classes.ParagraphStyle
+import demos.classes.Animation
 import org.openrndr.Program
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
@@ -11,6 +12,7 @@ import org.openrndr.draw.loadImage
 import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.extra.shapes.RoundedRectangle
 import org.openrndr.math.Vector2
+import org.openrndr.svg.loadSVG
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -18,6 +20,7 @@ object Global {
     lateinit var globalThis: Program
     lateinit var tracker: ADSRTracker
     lateinit var drawer: Drawer
+    val animation = Animation()
     var width by Delegates.notNull<Int>()
     var height by Delegates.notNull<Int>()
     var frameCount by Delegates.notNull<Int>()

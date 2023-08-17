@@ -1,5 +1,6 @@
 
 
+import Global.animation
 import Global.tracker
 import classes.MrLine
 import classes.ParagraphStyle
@@ -9,8 +10,11 @@ import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.loadFont
 import org.openrndr.extra.envelopes.ADSR
 import org.openrndr.extra.envelopes.ADSRTracker
+import org.openrndr.ffmpeg.ScreenRecorder
 import org.openrndr.math.IntVector2
 import org.openrndr.math.Vector2
+import org.openrndr.shape.ShapeContour
+import org.openrndr.svg.loadSVG
 import java.io.File
 import kotlin.system.measureTimeMillis
 
@@ -27,6 +31,7 @@ fun main() = application {
 
     program {
         setupKeyboardListeners()
+
         Global.drawer = drawer
         Global.width = width
         Global.height = height
@@ -41,7 +46,7 @@ fun main() = application {
         Global.h31 = ParagraphStyle(Global.monoBold2, ColorRGBa.BLACK, 1.2)
         Global.h1 = ParagraphStyle(Global.maruMini, ColorRGBa.BLACK, 0.1)
 
-        val animation = Animation()
+
         val MrLine0 = MrLine()
         MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
@@ -54,6 +59,12 @@ fun main() = application {
         Global.sustainTime = 5000
         tracker.sustain = 0.9
         tracker.release = 0.1
+
+//        extend(ScreenRecorder()) {
+//            contentScale = 2.0
+//            frameRate = 60
+//            maximumDuration =  10.0
+//        }
 
         extend {
             Global.frameCount = frameCount
@@ -74,17 +85,17 @@ fun main() = application {
 //                drawer.circle(c.x, c.y, 5.0)
 //            }
 
-            writerCallWords(sections[4], drawer)
-            sections[4].check()
-            sections[4].render(drawer)
-            sections[4].getDist(Mouse)
+//            writerCallWords(sections[4], drawer)
+//            sections[4].check()
+//            sections[4].render(drawer)
+//            sections[4].getDist(Mouse)
 
             val elapsedTime = measureTimeMillis {
                 sections.forEach { e ->
-                    if(e.id != 4){
-                        writerCallSections(e, drawer)
-                    }
-//                    writerCallWords(e, drawer)
+//                    if(e.id != 4){
+//                        writerCallSections(e, drawer)
+//                    }
+                    writerCallWords(e, drawer)
 //                    writerCallChars(e, drawer)
                     e.check()
                     e.render(drawer)
