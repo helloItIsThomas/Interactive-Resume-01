@@ -6,18 +6,13 @@
     "pathSlider": 0.0
   },
   {
-    "time": 0.0,
-    "easing": "quad-out",
-    "slider2": 0.0
-  },
-  {
-    "time": 1.0,
-    "easing": "quad-in-out",
+    "time": 0.5,
+    "easing": "quad-in",
     "pathSlider": 1.0
   },
   {
     "time": 1.0,
-    "easing": "quad-in",
-    "slider2": 1.0
+    "easing": "quad-in-out",
+    "pathSlider": 0.0
   }
 ]

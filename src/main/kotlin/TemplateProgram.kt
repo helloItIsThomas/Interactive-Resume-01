@@ -54,15 +54,15 @@ fun main() = application {
         Global.globalThis = this
         tracker = ADSRTracker(this)
         tracker.attack = 0.1
-        Global.peakAttackLv = 50.0
+//        Global.peakAttackLv = 50.0
         tracker.decay = 0.05
-        Global.sustainTime = 5000
+//        Global.sustainTime = 5000
         tracker.sustain = 0.9
         tracker.release = 0.1
 
 //        extend(ScreenRecorder()) {
 //            contentScale = 2.0
-//            frameRate = 60
+//            frameRate = 120
 //            maximumDuration =  10.0
 //        }
 
@@ -72,7 +72,7 @@ fun main() = application {
             MrLine0.core = frameCount.toDouble()
             MrLine0.update()
             drawer.clear(ColorRGBa.WHITE)
-            animation(((frameCount * 0.007) ) % 2.0)
+            animation(((frameCount * 0.002) ) % 2.0)
             MrLine0(((frameCount * 0.007) ) % 2.0)
             Mouse.pos = mouse.position
             drawer.circle(Mouse.pos, Mouse.rad)

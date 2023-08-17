@@ -2,11 +2,11 @@ package classes
 
 import Global.globalThis
 import Mouse
+import generateFlock
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.extra.color.presets.FOREST_GREEN
 import org.openrndr.extra.envelopes.ADSRTracker
-import org.openrndr.extra.noise.random
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
 import org.openrndr.shape.Rectangle
@@ -27,7 +27,9 @@ class Section(
     var thisRect = Rectangle(_x, _y, _w, _h)
     var varDecay = 0.05
 
+
     var wordPos = mutableListOf<Vector2>()
+    var wordPosOverTime: List<List<Vector2>>
 
     var parentNumWords = mutableListOf<Int>()
     // we are never not drawing all the text in a given section at once.
@@ -51,7 +53,7 @@ class Section(
         sectionTracker.decay = 0.05
         sectionTracker.sustain = 0.9
         sectionTracker.release = 0.075
-
+        wordPosOverTime = generateFlock(numWords)
     }
 
     val thisOuter = thisRect.offsetEdges(thisRect.width * 0.1, thisRect.height * 0.1)

@@ -1,19 +1,13 @@
 import Global.drawer
 import Global.frameCount
 import Global.vecList
-import classes.CustomText
-import classes.MrLine
 import classes.Section
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.writer
-import org.openrndr.extra.parameters.listParameters
 import org.openrndr.math.Vector2
 import org.openrndr.math.mix
-import org.openrndr.writer
-import kotlin.math.cos
+import org.openrndr.shape.Circle
 import kotlin.math.sin
-import kotlin.system.measureTimeMillis
-import kotlin.time.times
 
 
 fun writerCallSections(section: Section, localDraw: Drawer){
@@ -52,14 +46,26 @@ fun writerCallWords(section: Section, localDraw: Drawer){
 
             words.forEachIndexed { l, word ->
                 drawer.pushTransforms()
+
+//                tempGuideCirc = Circle((_x + _w*0.5), (_y + _h*0.5), _w*0.5)
+
                 val temp2 = Vector2(
-                    section.wordPos[globalWordIndex].x - this.cursor.x,
-                    section.wordPos[globalWordIndex].y - this.cursor.y
+                    section.wordPosOverTime[globalWordIndex][
+                        (((Global.animation.pathSlider * 60.0)).toInt()) % 60
+                    ].x - this.cursor.x + (section._x + section._w*0.5),
+                    section.wordPosOverTime[globalWordIndex][
+                        (((Global.animation.pathSlider * 60.0)).toInt()) % 60
+                    ].y - this.cursor.y + (section._y + section._h*0.5),
                 )
+//                val temp2 = Vector2(
+//                    section.wordPos[globalWordIndex].x - this.cursor.x,
+//                    section.wordPos[globalWordIndex].y - this.cursor.y
+//                )
                 drawer.translate(mix(section.origin, temp2,
-                    Global.animation.pathSlider)
-//                    (frameCount*0.0075) % 1.0)
-                )
+                    Global.animation.pathSlider
+//                    1.0
+//                    (frameCount*0.0075) % 1.0
+                ))
                 text("$word ")
                 globalWordIndex++
                 drawer.popTransforms()
@@ -101,4 +107,26 @@ fun writerCallChars(section: Section, localDraw: Drawer) {
             gaplessNewLine()
         }
     }
+}
+
+
+
+
+fun generateFlock(numWords: Int): List<List<Vector2>> {
+    val outerListSize = numWords
+    val innerListSize = 60
+    val moveRad = 300.0
+    val flock = mutableListOf<List<Vector2>>()
+
+    for (i in 0 until outerListSize) {
+        val birdPositions = mutableListOf<Vector2>()
+        for (j in 0 until innerListSize) {
+            val x = ((0.5 + 0.1 * sin((i*0.038 + j*0.24) + 2 * Math.PI * j / innerListSize)).toFloat()) * moveRad - moveRad*0.5
+            val y = ((0.5 + 0.1 * sin((j*0.1 + i*0.07) + 4 * Math.PI * (j) / innerListSize)).toFloat()) * moveRad - moveRad*0.5
+            birdPositions.add(Vector2(x, y))
+        }
+        flock.add(birdPositions)
+    }
+
+    return flock
 }
