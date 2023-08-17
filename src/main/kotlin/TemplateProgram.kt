@@ -61,10 +61,10 @@ fun main() = application {
 //            frameRate = 120
 //            maximumDuration =  10.0
 //        }
-        println("numSections = " + Global.numSections)
+
         extend {
             if(frameCount == 0){
-                sendRandomInt()
+                Selector.updateSelection()
                 println("initial sendRandomInt() fired")
             }
             Global.frameCount = frameCount
@@ -101,7 +101,10 @@ fun main() = application {
                     e.getDist(Mouse)
                     e.check()
                     e.render(drawer)
-                    MrLine0.check()
+                    // if I set seek to fire once with a trigger,
+                    // then I can call it outside the loop,
+                    // only when the condition is met.
+                    MrLine0.seek()
                 }
             }
 
@@ -121,6 +124,7 @@ fun main() = application {
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
             drawer.circle(myC.position(MrLine0.newPos), 5.0)
+
         }
     }
 }

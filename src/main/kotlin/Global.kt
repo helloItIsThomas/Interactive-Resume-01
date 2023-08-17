@@ -10,6 +10,7 @@ import org.openrndr.draw.FontImageMap
 import org.openrndr.draw.loadFont
 import org.openrndr.draw.loadImage
 import org.openrndr.extra.envelopes.ADSRTracker
+import org.openrndr.extra.noise.random
 import org.openrndr.extra.shapes.RoundedRectangle
 import org.openrndr.math.Vector2
 import org.openrndr.svg.loadSVG
@@ -41,11 +42,13 @@ object Global {
 }
 
 object Selector {
-    fun check(_randomNum: Int) {
-        if(_randomNum != Global.selection){
+
+    fun updateSelection(){
+        val randomNumber = random(1.0, Global.numSections.toDouble()).toInt()
+        if(randomNumber != Global.selection){
+            println(randomNumber)
             println("State Changed")
-            Global.selection = _randomNum
-            println(sections.size)
+            Global.selection = randomNumber
             sections[Global.selection].intro()
         }
     }

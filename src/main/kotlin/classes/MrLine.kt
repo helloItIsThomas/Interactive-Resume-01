@@ -38,10 +38,8 @@ class MrLine : Keyframer() {
     }
 
     fun seek() {
-//        newPos = mix(currentPos, stops[Global.selection], lineSlider0)
-    }
-
-    fun check() {
-        this.seek()
+        // triggerOn
+        // the I can triggerOff after a timeout I think.
+        newPos = mix(currentPos, stops[Global.selection % stops.size], lineSlider0)
     }
 }

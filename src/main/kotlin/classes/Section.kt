@@ -10,7 +10,6 @@ import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.math.Vector2
 import org.openrndr.shape.Circle
 import org.openrndr.shape.Rectangle
-import sendRandomInt
 import kotlin.properties.Delegates
 
 class Section(
@@ -33,8 +32,7 @@ class Section(
     var wordPosOverTime: List<List<Vector2>>
 
     var parentNumWords = mutableListOf<Int>()
-    // we are never not drawing all the text in a given section at once.
-    // so we should be able to have one numWords variable.
+
     var numWords = 0
     var numChars by Delegates.notNull<Int>()
     var tempGuideCirc: Circle
@@ -79,7 +77,7 @@ class Section(
                     isWithinPrev = isWithin
                     sectionTracker.triggerOff()
                     println("trigger off")
-                    sendRandomInt()
+                    Selector.updateSelection()
                 }
             } else{
                 isWithinPrev = isWithin

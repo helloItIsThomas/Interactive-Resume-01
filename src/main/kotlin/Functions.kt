@@ -30,10 +30,6 @@ fun writerCallWords(section: Section, localDraw: Drawer){
     var globalWordIndex = 0
     drawer.writer {
         this.box = section.thisRect
-        // here, below, is where we are handling
-        // a full section only through individual sub-sections.
-        // so, i should go to from 0 - 3 in the case of section 4.
-        // that's correct.
 
         section.allTxt.forEachIndexed { i, strBlock ->
             localDraw.fontMap = strBlock.txtStyle.font
@@ -123,6 +119,5 @@ fun generateFlock(numWords: Int): List<List<Vector2>> {
         }
         flock.add(birdPositions)
     }
-
     return flock
 }
