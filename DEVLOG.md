@@ -26,4 +26,4 @@ Then triggerOn() should run once when a new section is selected.
 Do I have a working selection mechanism? Let's check.
 
 Ok pretty sure the selection mechanism is working, and only storing one selection at a time.
-And I thing the sections are respecting that.
+And I think the sections are respecting that.
