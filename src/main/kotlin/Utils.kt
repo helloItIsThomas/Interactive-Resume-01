@@ -1,8 +1,9 @@
 
 
+import Global.MrLine0
 import org.openrndr.KEY_SPACEBAR
+import org.openrndr.MouseEvents
 import org.openrndr.Program
-import org.openrndr.extra.noise.random
 
 
 fun Program.setupKeyboardListeners() {
@@ -12,4 +13,5 @@ fun Program.setupKeyboardListeners() {
         }
     }
 }
+
 

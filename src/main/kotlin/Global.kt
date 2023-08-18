@@ -1,20 +1,18 @@
 
+import Global.MrLine0
 import Global.height
 import Global.width
+import classes.MrLine
 import classes.ParagraphStyle
 import demos.classes.Animation
+import org.openrndr.MouseEvents
 import org.openrndr.Program
-import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
 import org.openrndr.draw.FontImageMap
-import org.openrndr.draw.loadFont
-import org.openrndr.draw.loadImage
 import org.openrndr.extra.envelopes.ADSRTracker
 import org.openrndr.extra.noise.random
 import org.openrndr.extra.shapes.RoundedRectangle
 import org.openrndr.math.Vector2
-import org.openrndr.svg.loadSVG
-import java.io.File
 import kotlin.properties.Delegates
 
 object Global {
@@ -29,6 +27,7 @@ object Global {
     var selection = 4
     var prevSelection = 4
     var numSections = 0
+    lateinit var MrLine0: MrLine
 
     lateinit var monoReg: FontImageMap
     lateinit var monoBold2: FontImageMap
@@ -57,6 +56,21 @@ object Selector {
 object Mouse {
     var pos = Vector2(0.0, 0.0)
     val rad = 3.0
+    var mousePressed = false
+
+    fun onMousePress(mouse: MouseEvents) {
+        mouse.buttonDown.listen {
+            mousePressed = true
+        }
+
+        mouse.buttonUp.listen {
+            if (mousePressed) {
+                println("Mouse pressed at position: ${it.position}")
+                MrLine0.seek(it.position)
+                mousePressed = false
+            }
+        }
+    }
 }
 
 object LinePath {

@@ -4,31 +4,26 @@
 I guess I can put my notes in here
 ### Hello World
 
-Ok pretty sure the selection mechanism is working, and only storing one selection at a time.
-And I think the sections are respecting that.
 
-Ok I think it's time to get Mr Line going.
+So what if we have a delay
+between when the user moves the mouse and when MrLine moves.
+then, in this gap, we can do things.
+Maybe we can drop a point every N milliseconds..?
+and lerp between these points? specifically, the contourT of these points.
+Maybe if the mouse is moving, every N milliseconds a new point is being interpolated to.
 
-So at the moment,
-the cursor is the only thing that affects when the movement stops.
-I want Mr Line to also be able to affect when the movement stops.
-So updateSelection should not only be happening where it is right now,
-but also if MrLine gets to it.
-Next step, lets see if I can package things any more cleanly, so hopefully i can just call one function to update everything.
-Ok pretty sure I condensed everything as much as I can.
+Or maybe you have to click? And maybe that's by far the easiest way to go about this.
+Maybe we have affordances for buttons as well.
+Which would answer the question of how folks would know it's meant to be interacted with.
+Ok perfect let's do this.
 
-Now, Let's just have MrLine call updateSelection as well when his conditions are met.
+So, when the user clicks, it drops a point.
+This point is then converted to the point on the contour that it is nearest to.
+This nearest point is then converted to a contourT: Double.
+Then, the current contourT: Double interpolates to this contourT: Double.
+So, the mouse click should fire something. It can fire a number that increments from 0.0 to 1.0.
+Then, this number can be plugged into a mix function that mixes one number to the other.
 
-# So, for MrLine
-### In the intro method of section...
-i could say MrLine.triggerOn()
-and then the trigger would trigger MrLine to go from his current position
-to his goal position.
-well actually this isnt really the move
-because I don't want to have it go back to the start.
-I should do some thinking about how I want Mr. Line to act.
-Maybe if there's time, he stays in the area to get the surrounding sections if they bundle up.
-But, if the sections are spread apart enough, he will go there and then go home.
-So the question now is, how would I que a handful of destinations before I release the trigger?
-i probably don't want to use trigger in this case, it might get confusing.
-I think i'm done for the day though. I'll think about this tomorrow.
+
+
+Ok next step is to get a semi-elegant way to mix the drawPos from the currentPos to the targetPos

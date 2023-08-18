@@ -1,7 +1,9 @@
 
 
+import Global.MrLine0
 import Global.animation
 import Global.tracker
+import Mouse.onMousePress
 import classes.MrLine
 import classes.ParagraphStyle
 import org.openrndr.application
@@ -42,8 +44,7 @@ fun main() = application {
         Global.h1 = ParagraphStyle(Global.maruMini, ColorRGBa.BLACK, 0.1)
         Global.numSections = 9
 
-
-        val MrLine0 = MrLine()
+        MrLine0 = MrLine()
         MrLine0.loadFromJson(File("data/keyframes/keyframes-0.json"))
         animation.loadFromJson(File("data/keyframes/keyframes-0.json"))
 
@@ -58,7 +59,7 @@ fun main() = application {
 
 //        extend(ScreenRecorder()) {
 //            contentScale = 2.0
-//            frameRate = 120
+//            frameRate = 90
 //            maximumDuration =  10.0
 //        }
 
@@ -67,6 +68,7 @@ fun main() = application {
                 Selector.updateSelection()
                 println("initial sendRandomInt() fired")
             }
+            onMousePress(mouse)
             Global.frameCount = frameCount
             Global.clock = (Global.frameCount*0.05)
             MrLine0.core = frameCount.toDouble()
@@ -75,7 +77,6 @@ fun main() = application {
             animation(((frameCount * 0.002) ) % 1.0)
             MrLine0(((frameCount * 0.007) ) % 2.0)
             Mouse.pos = mouse.position
-            drawer.circle(Mouse.pos, Mouse.rad)
 
             drawer.fill = ColorRGBa.BLACK
 
@@ -101,10 +102,6 @@ fun main() = application {
                     e.getDist(Mouse)
                     e.check()
                     e.render(drawer)
-                    // if I set seek to fire once with a trigger,
-                    // then I can call it outside the loop,
-                    // only when the condition is met.
-                    MrLine0.seek()
                 }
             }
 
@@ -113,20 +110,17 @@ fun main() = application {
             drawer.fill = null
             drawer.stroke = ColorRGBa.BLACK
             drawer.strokeWeight = 0.75
-            drawer.lineSegment(
-                MrLine0.drawPos,
-                MrLine0.endPos
-            )
 
-            drawer.fill = null
-            drawer.stroke = ColorRGBa.BLACK
-            val myC = LinePath.outline.contour
+//            drawer.lineSegment(
+//                MrLine0.drawPos,
+//                MrLine0.endPos
+//            )
+            drawer.circle(MrLine0.drawPos, 10.0)
+
             drawer.fill = ColorRGBa.BLACK
             drawer.stroke = null
-            drawer.circle(myC.position(MrLine0.newPos), 5.0)
 
         }
     }
 }
-
 
