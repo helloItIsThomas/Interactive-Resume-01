@@ -26,4 +26,5 @@ Then, this number can be plugged into a mix function that mixes one number to th
 
 
 
-Ok next step is to get a semi-elegant way to mix the drawPos from the currentPos to the targetPos
+Ok next step is to get a semi-elegant way to mix the drawPos from the currentPos to the targetPos.
+A good solution probably is to do some type of timeout thing, or orx-timer or whatever.
